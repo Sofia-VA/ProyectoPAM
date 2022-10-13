@@ -15,12 +15,17 @@ class NavBar extends StatelessWidget {
               margin: EdgeInsets.all(0),
               padding: EdgeInsets.fromLTRB(0, 15, 0, 0),
               child: ListTile(
-                leading: CircleAvatar(
-                    radius: 25,
-                    backgroundColor: Theme.of(context).listTileTheme.iconColor),
-                title: Text("Username"),
-                subtitle: Text("user1234@email.com"),
-              ),
+                  leading: CircleAvatar(
+                      radius: 25,
+                      child: Icon(Icons.person),
+                      backgroundColor:
+                          Theme.of(context).listTileTheme.iconColor),
+                  title: Text("Username"),
+                  subtitle: Text("user1234@email.com"),
+                  onTap: () {
+                    // TODO: Send to ProfilePage
+                    Navigator.pop(context);
+                  }),
               decoration: BoxDecoration(color: Theme.of(context).primaryColor),
             ),
           ),
@@ -28,7 +33,7 @@ class NavBar extends StatelessWidget {
               leading: Icon(Icons.home),
               title: Text('Home'),
               onTap: () {
-                // TODO Send to HomePage
+                // TODO: Send to HomePage
                 Navigator.pop(context);
               }),
           _menuLoggedIn(context),
@@ -45,21 +50,14 @@ class NavBar extends StatelessWidget {
             leading: Icon(Icons.favorite),
             title: Text('Liked'),
             onTap: () {
-              // TODO List of liked - LOW PRIO
+              // TODO: List of liked - LOW PRIO
               Navigator.pop(context);
             }),
         ListTile(
             leading: Icon(Icons.calendar_month),
             title: Text('Schedule'),
             onTap: () {
-              // TODO Send to SchedulePage
-              Navigator.pop(context);
-            }),
-        ListTile(
-            leading: Icon(Icons.account_circle),
-            title: Text('Profile'),
-            onTap: () {
-              // TODO Send to ProfilePage
+              // TODO: Send to SchedulePage
               Navigator.pop(context);
             }),
         ListTile(
@@ -67,15 +65,15 @@ class NavBar extends StatelessWidget {
             title: Text('Activity'),
             trailing: _notificationCircle(context, 16),
             onTap: () {
-              // TODO List of notifications - LOW PRIO
+              // TODO: List of notifications - LOW PRIO
               Navigator.pop(context);
             }),
-        Divider(),
+        Divider(color: Colors.black),
         ListTile(
             leading: Icon(Icons.logout),
             title: Text('Log Out'),
             onTap: () {
-              // TODO Alert to Log Out
+              // TODO: Alert to Log Out
             }),
       ],
     );
@@ -84,18 +82,18 @@ class NavBar extends StatelessWidget {
   Column _menuNotLogged(BuildContext context) {
     return Column(
       children: [
-        Divider(),
+        Divider(color: Colors.black),
         ListTile(
             leading: Icon(Icons.login),
             title: Text('Log In'),
             onTap: () {
-              // TODO Send to LogInPage
+              // TODO: Send to LogInPage
             }),
         ListTile(
             leading: Icon(Icons.hiking),
             title: Text('Sign Up'),
             onTap: () {
-              // TODO Send to SignUpPage
+              // TODO: Send to SignUpPage
             }),
       ],
     );
