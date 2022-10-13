@@ -14,7 +14,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(
             seedColor: Colors.green, secondary: Colors.greenAccent),
         primaryColor: Colors.lightGreen,
-        iconTheme: IconThemeData(color: Colors.white),
+        iconTheme: IconThemeData(color: Colors.green[900]),
         listTileTheme: ListTileThemeData(iconColor: Colors.green[900]),
       ),
       home: HomePage(),
