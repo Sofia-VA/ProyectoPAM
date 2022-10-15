@@ -40,30 +40,33 @@ class _LocationPageState extends State<LocationPage>
 
   @override
   Widget build(BuildContext context) {
+    double expandedHeight = MediaQuery.of(context).size.height * 0.35;
+
     return Scaffold(
       body: NestedScrollView(
         floatHeaderSlivers: true,
         headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
           return <Widget>[
             SliverAppBar(
-                expandedHeight: MediaQuery.of(context).size.height * 0.35,
+                expandedHeight: expandedHeight,
                 floating: false,
                 pinned: true,
                 snap: false,
                 stretch: true,
                 centerTitle: true,
-                title: Text("Place name"),
+                // TODO: Fading title
+                title: innerBoxIsScrolled ? Text("Place name") : Text(""),
                 flexibleSpace: FlexibleSpaceBar(
-                  background: //flexibleSpaceWidget(context),
-                      Image.asset('assets/images/mountain_sunset.jpg',
-                          fit: BoxFit.cover),
+                  background: flexibleSpaceWidgetv2(
+                      context, expandedHeight), //flexibleSpaceWidget(context),
+
                   stretchModes: [
                     StretchMode.blurBackground,
                     StretchMode.zoomBackground
                   ],
                 ),
                 leading: IconButton(
-                    icon: Icon(Icons.keyboard_backspace),
+                    icon: Icon(Icons.arrow_back_ios),
                     onPressed: () {
                       //Navigator.pop(context);
                     }),
@@ -89,26 +92,68 @@ class _LocationPageState extends State<LocationPage>
       ),
     );
   }
+
+  Widget flexibleSpaceWidgetv2(BuildContext context, double expandedHeight) {
+    return Container(
+        height: expandedHeight + kToolbarHeight,
+        width: double.infinity,
+        decoration: BoxDecoration(
+            image: DecorationImage(
+                image: AssetImage('assets/images/mountain_sunset.jpg'),
+                fit: BoxFit.cover,
+                colorFilter: ColorFilter.mode(
+                    Colors.black.withOpacity(0.3), BlendMode.srcOver))),
+        child: SafeArea(
+          child: Column(
+            mainAxisSize: MainAxisSize.max,
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Column(
+                children: [
+                  Text('Place Name',
+                      style: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w400,
+                          fontSize: 25)),
+                  Text('City, Country',
+                      style: TextStyle(color: Colors.white, fontSize: 16)),
+                ],
+              ),
+              SizedBox(height: 20),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.favorite,
+                    color: Colors.white,
+                    size: 30,
+                  ),
+                  SizedBox(width: 20),
+                  FaIcon(FontAwesomeIcons.calendarPlus,
+                      color: Colors.white, size: 30),
+                ],
+              )
+            ],
+          ),
+        ));
+  }
 }
 
 Widget headerBottomBarWidget(BuildContext context) {
-  return Container(
-    margin: EdgeInsets.all(0),
-    padding: EdgeInsets.all(0),
-    child: Row(
-      mainAxisSize: MainAxisSize.max,
-      mainAxisAlignment: MainAxisAlignment.end,
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        CircleAvatar(
-            child: Icon(Icons.favorite, color: Colors.teal),
-            backgroundColor: Colors.white),
-        SizedBox(width: 20),
-        CircleAvatar(
-            child: FaIcon(FontAwesomeIcons.calendarPlus, color: Colors.teal),
-            backgroundColor: Colors.white),
-      ],
-    ),
+  return Row(
+    mainAxisSize: MainAxisSize.max,
+    mainAxisAlignment: MainAxisAlignment.end,
+    crossAxisAlignment: CrossAxisAlignment.center,
+    children: [
+      CircleAvatar(
+          child: Icon(Icons.favorite, color: Colors.teal),
+          backgroundColor: Colors.white),
+      SizedBox(width: 20),
+      CircleAvatar(
+          child: FaIcon(FontAwesomeIcons.calendarPlus, color: Colors.teal),
+          backgroundColor: Colors.white),
+    ],
   );
 }
 
