@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:viajes/home/location/details_widget.dart';
 
 class LocationPage extends StatefulWidget {
   @override
@@ -78,17 +79,20 @@ class _LocationPageState extends State<LocationPage>
                 bottom: _tabBar),
           ];
         },
-        body: TabBarView(
-          controller: _tabController,
-          children: [
-            //TODO: Add details widget
-            Text("Details Tab"),
-            //TODO: Add experiences widget
-            Text("Experiences Tab"),
-            //TODO: Add Q&A widget
-            Text("Q&A Tab"),
-          ],
-        ),
+        body: Column(children: [
+          Expanded(
+            child: TabBarView(
+              controller: _tabController,
+              children: [
+                LocationDetails(),
+                //TODO: Add experiences widget
+                Text("Experiences Tab"),
+                //TODO: Add Q&A widget
+                Text("Q&A Tab"),
+              ],
+            ),
+          ),
+        ]),
       ),
     );
   }
