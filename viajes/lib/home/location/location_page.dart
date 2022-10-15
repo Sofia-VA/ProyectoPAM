@@ -124,14 +124,23 @@ class _LocationPageState extends State<LocationPage>
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(
-                    Icons.favorite,
-                    color: Colors.white,
-                    size: 30,
-                  ),
+                  IconButton(
+                      onPressed: () {},
+                      icon: FaIcon(FontAwesomeIcons.locationDot,
+                          color: Colors.white, size: 30)),
                   SizedBox(width: 20),
-                  FaIcon(FontAwesomeIcons.calendarPlus,
-                      color: Colors.white, size: 30),
+                  IconButton(
+                      onPressed: () {},
+                      icon: Icon(
+                        Icons.favorite,
+                        color: Colors.white,
+                        size: 30,
+                      )),
+                  SizedBox(width: 20),
+                  IconButton(
+                      onPressed: () {},
+                      icon: FaIcon(FontAwesomeIcons.calendarPlus,
+                          color: Colors.white, size: 30)),
                 ],
               )
             ],
@@ -140,22 +149,22 @@ class _LocationPageState extends State<LocationPage>
   }
 }
 
-Widget headerBottomBarWidget(BuildContext context) {
-  return Row(
-    mainAxisSize: MainAxisSize.max,
-    mainAxisAlignment: MainAxisAlignment.end,
-    crossAxisAlignment: CrossAxisAlignment.center,
-    children: [
-      CircleAvatar(
-          child: Icon(Icons.favorite, color: Colors.teal),
-          backgroundColor: Colors.white),
-      SizedBox(width: 20),
-      CircleAvatar(
-          child: FaIcon(FontAwesomeIcons.calendarPlus, color: Colors.teal),
-          backgroundColor: Colors.white),
-    ],
-  );
-}
+// Widget headerBottomBarWidget(BuildContext context) {
+//   return Row(
+//     mainAxisSize: MainAxisSize.max,
+//     mainAxisAlignment: MainAxisAlignment.end,
+//     crossAxisAlignment: CrossAxisAlignment.center,
+//     children: [
+//       CircleAvatar(
+//           child: Icon(Icons.favorite, color: Colors.teal),
+//           backgroundColor: Colors.white),
+//       SizedBox(width: 20),
+//       CircleAvatar(
+//           child: FaIcon(FontAwesomeIcons.calendarPlus, color: Colors.teal),
+//           backgroundColor: Colors.white),
+//     ],
+//   );
+// }
 
 Widget flexibleSpaceWidget(BuildContext context) {
   return Stack(clipBehavior: Clip.antiAliasWithSaveLayer, children: [
