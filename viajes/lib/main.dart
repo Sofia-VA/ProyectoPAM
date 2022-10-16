@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:viajes/home_page.dart';
+import 'package:viajes/home/home_page.dart';
+
+import 'home/location/location_page.dart';
 
 void main() => runApp(const MyApp());
 
@@ -12,10 +14,10 @@ class MyApp extends StatelessWidget {
       title: 'Travel App',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(
-            seedColor: Colors.green, secondary: Colors.greenAccent),
-        primaryColor: Colors.lightGreen,
-        iconTheme: IconThemeData(color: Colors.green[900]),
-        listTileTheme: ListTileThemeData(iconColor: Colors.green[900]),
+            seedColor: Colors.teal, secondary: Color.fromARGB(255, 2, 114, 60)),
+        primaryColor: Colors.teal[300],
+        iconTheme: IconThemeData(color: Colors.teal[700]),
+        listTileTheme: ListTileThemeData(iconColor: Colors.green[700]),
       ),
       home: HomePage(),
     );
