@@ -1,9 +1,7 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
+
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:viajes/home/place_card.dart';
+import 'package:viajes/home/location_card.dart';
 import 'package:viajes/nav_bar.dart';
 
 class HomePage extends StatefulWidget {
@@ -93,7 +91,7 @@ class _HomePageState extends State<HomePage> {
                           child: Text("Nearby",
                               style: Theme.of(context).textTheme.headline6)),
                       SizedBox(height: 20),
-                      SizedBox(height: 140, child: _nearbyPlaces())
+                      SizedBox(height: 160, child: _nearbyPlaces())
                     ],
                   )),
             ]))

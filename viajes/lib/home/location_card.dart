@@ -29,7 +29,11 @@ class LocationCard extends StatelessWidget {
                       padding: EdgeInsets.only(left: 3, right: 3),
                       child: Column(
                         children: [
-                          Text("Place Name", overflow: TextOverflow.fade)
+                          Text("Place Name", overflow: TextOverflow.fade),
+                          SizedBox(height: 3),
+                          Text("10km away",
+                              overflow: TextOverflow.fade,
+                              style: Theme.of(context).textTheme.bodySmall)
                         ],
                       ),
                     ),
