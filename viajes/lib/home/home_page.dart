@@ -91,7 +91,13 @@ class _HomePageState extends State<HomePage> {
                           child: Text("Nearby",
                               style: Theme.of(context).textTheme.headline6)),
                       SizedBox(height: 20),
-                      SizedBox(height: 160, child: _nearbyPlaces())
+                      SizedBox(height: 160, child: _nearbyPlaces()),
+                      Align(
+                          alignment: Alignment.centerLeft,
+                          child: Text("Popular",
+                              style: Theme.of(context).textTheme.headline6)),
+                      SizedBox(height: 20),
+                      SizedBox(height: 160, child: LocationCard(width: 0.9)),
                     ],
                   )),
             ]))
@@ -247,7 +253,8 @@ class _HomePageState extends State<HomePage> {
         itemCount: 15,
         itemBuilder: (BuildContext context, int index) {
           return Container(
-              margin: EdgeInsets.only(right: 10), child: LocationCard());
+              margin: EdgeInsets.only(right: 10),
+              child: LocationCard(width: 0.4));
         });
   }
 }

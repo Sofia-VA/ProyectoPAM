@@ -29,6 +29,11 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  
+  # UI
+  font_awesome_flutter: ^10.2.1
+  # draggable_home: ^1.0.2
+  # flutter_staggered_grid_view: ^0.6.2
 
 
   # The following adds the Cupertino Icons font to your application.
@@ -58,8 +63,10 @@ flutter:
   uses-material-design: true
 
   # To add assets to your application, add an assets section, like this:
-  # assets:
-  #   - images/a_dot_burr.jpeg
+  assets:
+    - assets/images/mountain_sunset.jpg
+    - assets/images/mountain_night.gif
+    - assets/images/travel_banner.jpg
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see

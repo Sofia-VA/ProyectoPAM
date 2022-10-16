@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 
 class LocationCard extends StatelessWidget {
-  const LocationCard({super.key});
+  final double width;
+  const LocationCard({super.key, required this.width});
 
   @override
   Widget build(BuildContext context) {
@@ -21,7 +22,7 @@ class LocationCard extends StatelessWidget {
                           image:
                               AssetImage("assets/images/mountain_sunset.jpg"),
                           height: 90,
-                          width: MediaQuery.of(context).size.width * 0.4,
+                          width: MediaQuery.of(context).size.width * width,
                           fit: BoxFit.cover),
                     ]),
                     SizedBox(height: 10),
