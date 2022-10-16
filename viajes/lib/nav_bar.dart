@@ -70,6 +70,13 @@ class NavBar extends StatelessWidget {
             }),
         Divider(color: Colors.black),
         ListTile(
+            leading: Icon(Icons.question_mark),
+            title: Text('FAQ'),
+            onTap: () {
+              // TODO: Send to AppQAPage
+              Navigator.pop(context);
+            }),
+        ListTile(
             leading: Icon(Icons.logout),
             title: Text('Log Out'),
             onTap: () {
