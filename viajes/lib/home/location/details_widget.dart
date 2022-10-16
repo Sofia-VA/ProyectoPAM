@@ -14,12 +14,13 @@ class LocationDetails extends StatelessWidget {
             child: Column(
               children: [
                 Align(
-                    alignment: Alignment.centerLeft,
+                    alignment: Alignment.center,
                     child: Text("Place Name",
                         textAlign: TextAlign.left,
                         style: Theme.of(context).textTheme.headline6)),
                 Divider(),
                 Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Row(
                       children: [
@@ -31,19 +32,19 @@ class LocationDetails extends StatelessWidget {
                     SizedBox(width: 10),
                     Row(
                       children: [
-                        Icon(Icons.favorite),
+                        Icon(Icons.park),
                         SizedBox(width: 3),
-                        Text("312"),
+                        Text("Place Type"),
                       ],
                     ),
                     SizedBox(width: 10),
                     Row(
                       children: [
-                        Icon(Icons.park),
+                        Icon(Icons.favorite),
                         SizedBox(width: 3),
-                        Text("Place Type"),
+                        Text("312"),
                       ],
-                    )
+                    ),
                   ],
                 ),
                 SizedBox(height: 20),

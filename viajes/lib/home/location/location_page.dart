@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:viajes/home/location/details_widget.dart';
+import 'package:viajes/home/location/experiences_widget.dart';
 
 class LocationPage extends StatefulWidget {
   @override
@@ -84,9 +85,11 @@ class _LocationPageState extends State<LocationPage>
             child: TabBarView(
               controller: _tabController,
               children: [
+                //TODO: Fix overflow
                 LocationDetails(),
                 //TODO: Add experiences widget
-                Text("Experiences Tab"),
+                //Text("Experiences Tab"),
+                LocationExperiences(),
                 //TODO: Add Q&A widget
                 Text("Q&A Tab"),
               ],
