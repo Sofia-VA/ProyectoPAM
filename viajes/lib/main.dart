@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 
-import 'package:viajes/home_page.dart';
+import 'package:viajes/home/home_page.dart';
+import 'package:viajes/home/location/location_page.dart';
+
+import 'home/location/experience_page.dart';
 
 void main() => runApp(const MyApp());
 
@@ -18,7 +21,7 @@ class MyApp extends StatelessWidget {
         iconTheme: IconThemeData(color: Colors.teal[700]),
         listTileTheme: ListTileThemeData(iconColor: Colors.deepPurple[700]),
       ),
-      home: HomePage(),
+      home: ExperiencePage(),
     );
   }
 }
