@@ -12,6 +12,9 @@ class ExperiencePage extends StatefulWidget {
 }
 
 class _ExperiencePageState extends State<ExperiencePage> {
+  ScrollController scrollController = ScrollController();
+  final commentSectionAnchor = GlobalKey();
+
   final galleryImages = const [
     'assets/images/mountain_sunset.jpg',
     'assets/images/mountain_night.gif',
@@ -51,6 +54,7 @@ Integer eget neque tortor. Morbi ligula leo, suscipit et ligula in, molestie dig
                 )),
           ]),
       body: SingleChildScrollView(
+        controller: scrollController,
         child: Column(
           children: [
             SizedBox(height: 20),
@@ -64,7 +68,7 @@ Integer eget neque tortor. Morbi ligula leo, suscipit et ligula in, molestie dig
                     SizedBox(height: 5),
                     Divider(thickness: 2),
                     SizedBox(height: 5),
-                    _postHeader(context),
+                    _postHeader(context, commentSectionAnchor),
                     Divider(thickness: 2),
                     SizedBox(height: 5),
                     Text(
@@ -81,7 +85,7 @@ Integer eget neque tortor. Morbi ligula leo, suscipit et ligula in, molestie dig
     );
   }
 
-  Row _postHeader(BuildContext context) {
+  Row _postHeader(BuildContext context, commentSectionAnchor) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
@@ -111,7 +115,17 @@ Integer eget neque tortor. Morbi ligula leo, suscipit et ligula in, molestie dig
             Text('Free', style: Theme.of(context).textTheme.bodyLarge),
           ],
         ),
-        IconButton(onPressed: () {}, icon: Icon(Icons.comment_rounded)),
+        IconButton(
+            onPressed: () {
+              if (commentSectionAnchor.currentContext != null) {
+                Scrollable.ensureVisible(
+                  commentSectionAnchor.currentContext,
+                  alignment: 0.5,
+                  duration: const Duration(seconds: 1),
+                );
+              }
+            },
+            icon: Icon(Icons.comment_rounded)),
       ],
     );
   }
@@ -135,10 +149,12 @@ Integer eget neque tortor. Morbi ligula leo, suscipit et ligula in, molestie dig
   }
 
   Widget _commentSection(BuildContext context) {
-    return Column(children: [
+    return Column(key: commentSectionAnchor, children: [
       Align(
           alignment: Alignment.centerLeft,
-          child: Text("Comments", style: Theme.of(context).textTheme.headline6))
+          child:
+              Text("Comments", style: Theme.of(context).textTheme.headline6)),
+      Divider(thickness: 2),
     ]);
   }
 }
