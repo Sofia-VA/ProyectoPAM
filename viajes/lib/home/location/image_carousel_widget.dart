@@ -3,74 +3,37 @@ import 'dart:async';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_icon_shadow/flutter_icon_shadow.dart';
-
 import 'package:swipe_image_gallery/swipe_image_gallery.dart';
 
-class ExperiencePage extends StatefulWidget {
-  const ExperiencePage({super.key});
+class ImageCarousel extends StatefulWidget {
+  final galleryImages;
+  const ImageCarousel({super.key, required this.galleryImages});
 
   @override
-  State<ExperiencePage> createState() => _ExperiencePageState();
+  State<ImageCarousel> createState() => _ImageCarouselState();
 }
 
-class _ExperiencePageState extends State<ExperiencePage> {
-  final galleryImages = const [
-    'assets/images/mountain_sunset.jpg',
-    'assets/images/mountain_night.gif',
-    'assets/images/lake_morning.png',
-  ];
-
-  StreamController<Widget> overlayController =
-      StreamController<Widget>.broadcast();
-
-  @override
-  void dispose() {
-    overlayController.close();
-    super.dispose();
-  }
-
+class _ImageCarouselState extends State<ImageCarousel> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-          leading: IconButton(
-              icon: IconShadow(
-                Icon(Icons.arrow_back_ios),
-                shadowOffset: Offset.fromDirection(1, 2),
-                shadowColor: Color.fromARGB(114, 0, 0, 0),
-                shadowBlurSigma: 1,
-              ),
-              onPressed: () {
-                //Navigator.pop(context);
-              }),
-          actions: [
-            IconButton(
-                onPressed: () {},
-                icon: IconShadow(
-                  Icon(Icons.favorite),
-                  shadowOffset: Offset.fromDirection(1, 2),
-                  shadowColor: Color.fromARGB(114, 0, 0, 0),
-                  shadowBlurSigma: 1,
-                )),
-          ]),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [SizedBox(height: 20), imageCarousel(context)],
-        ),
-      ),
-    );
-  }
+    StreamController<Widget> overlayController =
+        StreamController<Widget>.broadcast();
 
-  Widget imageCarousel(BuildContext context) {
+    @override
+    void dispose() {
+      overlayController.close();
+      super.dispose();
+    }
+
     return Container(
         child: CarouselSlider.builder(
-            itemCount: galleryImages.length,
+            itemCount: widget.galleryImages.length,
             options: CarouselOptions(
               autoPlay: true,
               aspectRatio: 1.0,
               height: MediaQuery.of(context).size.height * 0.3,
               enlargeCenterPage: true,
-              viewportFraction: 0.8,
+              viewportFraction: 0.7,
             ),
             itemBuilder:
                 (BuildContext context, int itemIndex, int pageViewIndex) {
@@ -78,33 +41,32 @@ class _ExperiencePageState extends State<ExperiencePage> {
                   onTap: () {
                     SwipeImageGallery(
                       context: context,
-                      children: galleryImages
-                          .map((img) => Image(image: AssetImage(img)))
+                      children: widget.galleryImages
+                          .map<Widget>((img) => Image(image: AssetImage(img)))
                           .toList(),
                       initialIndex: itemIndex,
                       onSwipe: (index) {
                         overlayController.add(GalleryOverlay(
-                          title: '${index + 1}/${galleryImages.length}',
+                          title: '${index + 1}/${widget.galleryImages.length}',
                         ));
                       },
                       overlayController: overlayController,
                       initialOverlay: GalleryOverlay(
-                        title: '${itemIndex + 1}/${galleryImages.length}',
+                        title:
+                            '${itemIndex + 1}/${widget.galleryImages.length}',
                       ),
                     ).show();
                   },
                   child: Container(
                       height: MediaQuery.of(context).size.height * 0.4,
                       decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(15),
                           image: DecorationImage(
-                              image: AssetImage(galleryImages[itemIndex]),
+                              image:
+                                  AssetImage(widget.galleryImages[itemIndex]),
                               fit: BoxFit.cover))));
             }));
   }
-}
-
-Widget experienceBody(BuildContext context) {
-  return Container();
 }
 
 class GalleryOverlay extends StatelessWidget {
