@@ -18,7 +18,6 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(
             seedColor: Colors.teal, secondary: Color.fromARGB(255, 2, 114, 60)),
         primaryColor: Colors.teal[300],
-        highlightColor: Colors.amber,
         iconTheme: IconThemeData(color: Colors.teal[700]),
         listTileTheme: ListTileThemeData(iconColor: Colors.deepPurple[700]),
       ),

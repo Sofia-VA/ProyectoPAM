@@ -24,7 +24,7 @@ class LocationDetails extends StatelessWidget {
                   children: [
                     Row(
                       children: [
-                        Icon(Icons.star),
+                        Icon(Icons.star, color: Colors.amberAccent),
                         SizedBox(width: 3),
                         Text("4.5"),
                       ],

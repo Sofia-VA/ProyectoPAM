@@ -61,11 +61,13 @@ Integer eget neque tortor. Morbi ligula leo, suscipit et ligula in, molestie dig
             ImageCarousel(galleryImages: galleryImages),
             SizedBox(height: 20),
             Container(
-                padding: EdgeInsets.fromLTRB(20, 20, 20, 0),
+                padding: EdgeInsets.fromLTRB(22, 22, 22, 0),
                 child: Column(
                   children: [
                     _experienceTitle(context),
                     SizedBox(height: 5),
+                    Divider(thickness: 2),
+                    _postData(context),
                     Divider(thickness: 2),
                     SizedBox(height: 5),
                     _postHeader(context, commentSectionAnchor),
@@ -83,6 +85,52 @@ Integer eget neque tortor. Morbi ligula leo, suscipit et ligula in, molestie dig
         ),
       ),
     );
+  }
+
+  Row _experienceTitle(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Flexible(
+            child: Text("Experience Post Title",
+                style: Theme.of(context).textTheme.headline5)),
+        Row(
+          children: [
+            Icon(Icons.star, size: 25, color: Colors.amberAccent),
+            SizedBox(width: 3),
+            Text('4.5', style: Theme.of(context).textTheme.bodyLarge),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget _postData(BuildContext context) {
+    return Row(children: [
+      Container(
+        padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            Icon(Icons.date_range, size: 25),
+            SizedBox(width: 3),
+            Text('12/11/2022'),
+          ],
+        ),
+      ),
+      Flexible(
+        child: ListTile(
+            title: Text("by Long Username Name", textAlign: TextAlign.end),
+            trailing: CircleAvatar(
+                radius: 18,
+                child: Icon(Icons.person),
+                backgroundColor: Theme.of(context).listTileTheme.iconColor),
+            onTap: () {
+              // TODO: Send to ProfilePage
+              // Navigator.pop(context);
+            }),
+      ),
+    ]);
   }
 
   Row _postHeader(BuildContext context, commentSectionAnchor) {
@@ -126,24 +174,7 @@ Integer eget neque tortor. Morbi ligula leo, suscipit et ligula in, molestie dig
               }
             },
             icon: Icon(Icons.comment_rounded)),
-      ],
-    );
-  }
-
-  Row _experienceTitle(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Flexible(
-            child: Text("Experience Post Title",
-                style: Theme.of(context).textTheme.headline5)),
-        Row(
-          children: [
-            Icon(Icons.star, size: 25, color: Theme.of(context).highlightColor),
-            SizedBox(width: 3),
-            Text('4.5', style: Theme.of(context).textTheme.bodyLarge),
-          ],
-        ),
+        SizedBox(width: 20)
       ],
     );
   }
