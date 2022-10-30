@@ -40,8 +40,15 @@ dependencies:
   swipe_image_gallery: ^0.8.0
   carousel_slider: ^4.1.1
 
+  comment_box: ^0.0.17
+  flutter_keyboard_visibility: ^5.4.0
+
   shadow: ^1.5.0
   flutter_icon_shadow: ^2.0.6
+
+  # Bloc
+  flutter_bloc: ^8.1.1
+  equatable: ^2.0.5
 
 dev_dependencies:
   flutter_test:

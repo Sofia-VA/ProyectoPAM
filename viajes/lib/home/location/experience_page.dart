@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_icon_shadow/flutter_icon_shadow.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:viajes/home/location/comments/comment_section.dart';
 
 import 'image_carousel_widget.dart';
 
@@ -13,6 +14,7 @@ class ExperiencePage extends StatefulWidget {
 
 class _ExperiencePageState extends State<ExperiencePage> {
   ScrollController scrollController = ScrollController();
+
   final commentSectionAnchor = GlobalKey();
 
   final galleryImages = const [
@@ -69,18 +71,16 @@ Integer eget neque tortor. Morbi ligula leo, suscipit et ligula in, molestie dig
                     Divider(thickness: 2),
                     _postData(context),
                     Divider(thickness: 2),
-                    SizedBox(height: 5),
                     _postHeader(context, commentSectionAnchor),
                     Divider(thickness: 2),
-                    SizedBox(height: 5),
+                    SizedBox(height: 20),
                     Text(
                       description,
                       textAlign: TextAlign.justify,
                     ),
-                    Divider(thickness: 2),
-                    _commentSection(context)
                   ],
-                ))
+                )),
+            CommentSection(anchor: commentSectionAnchor)
           ],
         ),
       ),
@@ -177,15 +177,5 @@ Integer eget neque tortor. Morbi ligula leo, suscipit et ligula in, molestie dig
         SizedBox(width: 20)
       ],
     );
-  }
-
-  Widget _commentSection(BuildContext context) {
-    return Column(key: commentSectionAnchor, children: [
-      Align(
-          alignment: Alignment.centerLeft,
-          child:
-              Text("Comments", style: Theme.of(context).textTheme.headline6)),
-      Divider(thickness: 2),
-    ]);
   }
 }
