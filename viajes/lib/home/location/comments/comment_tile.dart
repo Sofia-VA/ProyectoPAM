@@ -57,38 +57,44 @@ class _CommentTileState extends State<CommentTile> {
         child: DefaultTextStyle.merge(
             style: Theme.of(context).textTheme.bodySmall,
             child: Row(
-              mainAxisAlignment: MainAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                Text.rich(
-                  TextSpan(
-                    children: [
-                      WidgetSpan(
-                          child: GestureDetector(
+                GestureDetector(
+                    child: Text('87 Replies'),
+                    onTap: () {
+                      // TODO: Show replies
+                    }),
+                Row(
+                  children: [
+                    GestureDetector(
+                      onTap: () {
+                        BlocProvider.of<CommentBloc>(context)
+                            .add(WriteToCommentBoxEvent());
+                      },
+                      child: Text.rich(
+                        TextSpan(
+                          children: [
+                            WidgetSpan(
                               child: Icon(Icons.comment, size: 14),
-                              onTap: () {
-                                // TODO: Show replies and open reply box
-                                BlocProvider.of<CommentBloc>(context)
-                                    .add(WriteToCommentBoxEvent());
-                              })),
-                      TextSpan(
-                        text: ' 5 replies',
-                        recognizer: new TapGestureRecognizer()
-                          ..onTap = () {
-                            // TODO: Show replies
-                          },
+                            ),
+                            TextSpan(
+                              text: ' Reply',
+                            ),
+                          ],
+                        ),
                       ),
-                    ],
-                  ),
+                    ),
+                    Text('   '),
+                    Text.rich(
+                      TextSpan(
+                        children: [
+                          WidgetSpan(child: Icon(Icons.thumb_up, size: 14)),
+                          TextSpan(text: ' 122'),
+                        ],
+                      ),
+                    )
+                  ],
                 ),
-                Text('   '),
-                Text.rich(
-                  TextSpan(
-                    children: [
-                      WidgetSpan(child: Icon(Icons.thumb_up, size: 14)),
-                      TextSpan(text: ' 122'),
-                    ],
-                  ),
-                )
               ],
             )),
       ),
