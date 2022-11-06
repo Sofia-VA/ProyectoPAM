@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/gestures.dart';
-import 'package:comment_box/comment/comment.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:viajes/home/location/comments/bloc/comment_bloc.dart';
 
@@ -63,6 +62,8 @@ class _CommentTileState extends State<CommentTile> {
                     child: Text('87 Replies'),
                     onTap: () {
                       // TODO: Show replies
+                      BlocProvider.of<CommentBloc>(context)
+                          .add(ShowRepliesEvent());
                     }),
                 Row(
                   children: [

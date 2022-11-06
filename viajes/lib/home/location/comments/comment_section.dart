@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:viajes/home/location/comments/bloc/comment_bloc.dart';
 import 'package:viajes/home/location/comments/comment_tile.dart';
 import 'dart:async';
@@ -28,7 +29,7 @@ class _CommentSectionState extends State<CommentSection> {
   @override
   void initState() {
     super.initState();
-
+//TODO: Focus Issue (duplicate replyBox)
     replyBoxFocusNode = FocusNode();
     commentBoxFocusNode = FocusNode();
 
@@ -52,10 +53,17 @@ class _CommentSectionState extends State<CommentSection> {
     super.dispose();
   }
 
-  final comments = [
-    'Wow'
-  ]; //, 'Thanks for sharing', 'Rad', 'Is this really free?'];
-  final replies = ['Yes!', 'Awesome!'];
+  final comments = ['Wow', 'Thanks for sharing', 'Rad', 'Is this really free?'];
+  final replies = [
+    'Yes!',
+    'Awesome!',
+    'Lol I photobombed you',
+    'That was helpful',
+    'I agree',
+    'Hmmm you forgot to mention how you got there. Does anybody know how to? I\'m really lost',
+    'I have some other questions, can I DM you?',
+    'Wait, you can do that?'
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -64,30 +72,36 @@ class _CommentSectionState extends State<CommentSection> {
         if (state is FocusCommentBoxState) {
           replyBoxFocusNode.requestFocus();
           _replyBoxVisibility = true;
+        } else if (state is ShowRepliesRequestState) {
+          _replyBoxVisibility = false;
+          _showReplies(context);
         }
       },
       builder: (context, state) {
-        return Stack(
-          children: [
-            Container(
-                padding: EdgeInsets.fromLTRB(22, 22, 22, 0),
-                child: Column(
-                  children: [
-                    Divider(thickness: 2),
-                    Align(
-                        alignment: Alignment.centerLeft,
-                        child: Text("Comments (4)",
-                            style: Theme.of(context).textTheme.headline6)),
-                    Divider(thickness: 2),
-                    _writeCommentBar(
-                        context, commentController, commentBoxFocusNode, ''),
-                    SizedBox(key: widget.anchor, height: 5),
-                    _commentList(context),
-                    //SizedBox(height: 50),
-                  ],
-                )),
-            _replyBox(context),
-          ],
+        return SafeArea(
+          child: Stack(
+            clipBehavior: Clip.none,
+            children: [
+              Container(
+                  padding: EdgeInsets.fromLTRB(22, 22, 22, 0),
+                  child: Column(
+                    children: [
+                      Divider(thickness: 2),
+                      Align(
+                          alignment: Alignment.centerLeft,
+                          child: Text("Comments (${comments.length})",
+                              style: Theme.of(context).textTheme.headline6)),
+                      Divider(thickness: 2),
+                      _writeCommentBar(
+                          context, commentController, commentBoxFocusNode, ''),
+                      SizedBox(key: widget.anchor, height: 5),
+                      _commentList(context, comments, null),
+                      //SizedBox(height: 50),
+                    ],
+                  )),
+              _replyBox(context),
+            ],
+          ),
         );
       },
     );
@@ -100,28 +114,31 @@ class _CommentSectionState extends State<CommentSection> {
       right: 0,
       child: Visibility(
         visible: _replyBoxVisibility,
-        child: Container(
-          padding: EdgeInsets.fromLTRB(0, 10, 0, 10),
-          child: Column(
-            children: [
-              ListTile(
-                leading: GestureDetector(
-                  onTap: () {
-                    // TODO: Send to ProfilePage
-                  },
-                  child: CircleAvatar(
-                      radius: 18,
-                      child: Icon(Icons.person),
-                      backgroundColor:
-                          Theme.of(context).listTileTheme.iconColor),
+        child: Material(
+          elevation: 4,
+          child: Container(
+            padding: EdgeInsets.fromLTRB(0, 10, 0, 10),
+            child: Column(
+              children: [
+                ListTile(
+                  leading: GestureDetector(
+                    onTap: () {
+                      // TODO: Send to ProfilePage
+                    },
+                    child: CircleAvatar(
+                        radius: 18,
+                        child: Icon(Icons.person),
+                        backgroundColor:
+                            Theme.of(context).listTileTheme.iconColor),
+                  ),
+                  title: _writeCommentBar(context, replyController,
+                      replyBoxFocusNode, 'Replying to'),
                 ),
-                title: _writeCommentBar(
-                    context, replyController, replyBoxFocusNode, 'Replying to'),
-              ),
-            ],
+              ],
+            ),
+            decoration:
+                BoxDecoration(color: Theme.of(context).scaffoldBackgroundColor),
           ),
-          decoration:
-              BoxDecoration(color: Theme.of(context).scaffoldBackgroundColor),
         ),
       ),
     );
@@ -168,8 +185,9 @@ class _CommentSectionState extends State<CommentSection> {
     );
   }
 
-  Widget _commentList(BuildContext context) {
+  Widget _commentList(BuildContext context, comments, ScrollController? sc) {
     return ListView.builder(
+      controller: sc,
       shrinkWrap: true,
       physics: ClampingScrollPhysics(),
       padding: EdgeInsets.all(5),
@@ -178,6 +196,56 @@ class _CommentSectionState extends State<CommentSection> {
       itemBuilder: (BuildContext context, int index) {
         return CommentTile(comment: comments[index]);
       },
+    );
+  }
+
+  _showReplies(BuildContext context) {
+    showBarModalBottomSheet(
+        backgroundColor: Colors.blue,
+        elevation: 1,
+        enableDrag: true,
+        context: context,
+        builder: (BuildContext context) {
+          return SafeArea(
+            child: Container(
+                decoration: BoxDecoration(
+                    color: Theme.of(context).scaffoldBackgroundColor,
+                    border: Border.all(color: Colors.blueAccent)),
+                child: Stack(
+                  clipBehavior: Clip.none,
+                  children: [
+                    _repliesList(ModalScrollController.of(context)),
+                    _replyBox(context),
+                  ],
+                )),
+          );
+
+          // (context) => _repliesList(
+          //     ModalScrollController.of(context)!, mainContext)
+        });
+  }
+
+  Widget _repliesList(ScrollController? sc) {
+    return SingleChildScrollView(
+      child: Column(
+        children: [
+          Container(
+            padding: EdgeInsets.only(
+                left: MediaQuery.of(context).size.width * 0.02,
+                right: MediaQuery.of(context).size.width * 0.02),
+            child: CommentTile(
+              comment: 'This is the main comment',
+            ),
+          ),
+          Divider(thickness: 2),
+          Container(
+            padding: EdgeInsets.only(
+                left: MediaQuery.of(context).size.width * 0.1,
+                right: MediaQuery.of(context).size.width * 0.02),
+            child: _commentList(context, replies, sc),
+          ),
+        ],
+      ),
     );
   }
 }
