@@ -16,7 +16,7 @@ class _LocationPageState extends State<LocationPage>
   void initState() {
     _tabController = TabController(
       initialIndex: 0,
-      length: 3,
+      length: 2,
       vsync: this,
     );
     super.initState();
@@ -37,7 +37,7 @@ class _LocationPageState extends State<LocationPage>
           tabs: [
             Text("Details"),
             Text("Experiences"),
-            Text("Q&A"),
+            //Text("Q&A"),
           ]);
 
   @override
@@ -85,13 +85,11 @@ class _LocationPageState extends State<LocationPage>
             child: TabBarView(
               controller: _tabController,
               children: [
-                //TODO: Fix overflow
                 LocationDetails(),
-                //TODO: Add experiences widget
                 //Text("Experiences Tab"),
                 LocationExperiences(),
-                //TODO: Add Q&A widget
-                Text("Q&A Tab"),
+                //TODO: Rethink Q&A widget
+                //Text("Q&A Tab"),
               ],
             ),
           ),
@@ -155,23 +153,6 @@ class _LocationPageState extends State<LocationPage>
         ));
   }
 }
-
-// Widget headerBottomBarWidget(BuildContext context) {
-//   return Row(
-//     mainAxisSize: MainAxisSize.max,
-//     mainAxisAlignment: MainAxisAlignment.end,
-//     crossAxisAlignment: CrossAxisAlignment.center,
-//     children: [
-//       CircleAvatar(
-//           child: Icon(Icons.favorite, color: Colors.teal),
-//           backgroundColor: Colors.white),
-//       SizedBox(width: 20),
-//       CircleAvatar(
-//           child: FaIcon(FontAwesomeIcons.calendarPlus, color: Colors.teal),
-//           backgroundColor: Colors.white),
-//     ],
-//   );
-// }
 
 Widget flexibleSpaceWidget(BuildContext context) {
   return Stack(clipBehavior: Clip.antiAliasWithSaveLayer, children: [
