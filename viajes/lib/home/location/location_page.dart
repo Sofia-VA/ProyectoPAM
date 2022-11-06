@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:viajes/home/location/details_widget.dart';
-import 'package:viajes/home/location/experiences_widget.dart';
+import 'package:viajes/home/location/details_tab.dart';
+import 'package:viajes/home/location/experiences_tab.dart';
+
+import '../../nav_bar.dart';
 
 class LocationPage extends StatefulWidget {
   @override
@@ -16,7 +18,7 @@ class _LocationPageState extends State<LocationPage>
   void initState() {
     _tabController = TabController(
       initialIndex: 0,
-      length: 3,
+      length: 2,
       vsync: this,
     );
     super.initState();
@@ -37,7 +39,7 @@ class _LocationPageState extends State<LocationPage>
           tabs: [
             Text("Details"),
             Text("Experiences"),
-            Text("Q&A"),
+            //Text("Q&A"),
           ]);
 
   @override
@@ -45,6 +47,7 @@ class _LocationPageState extends State<LocationPage>
     double expandedHeight = MediaQuery.of(context).size.height * 0.35;
 
     return Scaffold(
+      drawer: NavBar(),
       body: NestedScrollView(
         floatHeaderSlivers: true,
         headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
@@ -70,7 +73,7 @@ class _LocationPageState extends State<LocationPage>
                 leading: IconButton(
                     icon: Icon(Icons.arrow_back_ios),
                     onPressed: () {
-                      //Navigator.pop(context);
+                      Navigator.pop(context);
                     }),
                 actions: [
                   IconButton(
@@ -85,13 +88,10 @@ class _LocationPageState extends State<LocationPage>
             child: TabBarView(
               controller: _tabController,
               children: [
-                //TODO: Fix overflow
                 LocationDetails(),
-                //TODO: Add experiences widget
-                //Text("Experiences Tab"),
                 LocationExperiences(),
-                //TODO: Add Q&A widget
-                Text("Q&A Tab"),
+                //TODO: Rethink Q&A widget
+                //Text("Q&A Tab"),
               ],
             ),
           ),
@@ -155,23 +155,6 @@ class _LocationPageState extends State<LocationPage>
         ));
   }
 }
-
-// Widget headerBottomBarWidget(BuildContext context) {
-//   return Row(
-//     mainAxisSize: MainAxisSize.max,
-//     mainAxisAlignment: MainAxisAlignment.end,
-//     crossAxisAlignment: CrossAxisAlignment.center,
-//     children: [
-//       CircleAvatar(
-//           child: Icon(Icons.favorite, color: Colors.teal),
-//           backgroundColor: Colors.white),
-//       SizedBox(width: 20),
-//       CircleAvatar(
-//           child: FaIcon(FontAwesomeIcons.calendarPlus, color: Colors.teal),
-//           backgroundColor: Colors.white),
-//     ],
-//   );
-// }
 
 Widget flexibleSpaceWidget(BuildContext context) {
   return Stack(clipBehavior: Clip.antiAliasWithSaveLayer, children: [

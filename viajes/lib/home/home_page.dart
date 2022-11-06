@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:viajes/home/custom_icon_button.dart';
 import 'package:viajes/home/location_card.dart';
 import 'package:viajes/nav_bar.dart';
 
@@ -82,134 +83,31 @@ class _HomePageState extends State<HomePage> {
                           child: Text("Categories",
                               style: Theme.of(context).textTheme.headline6)),
                       SizedBox(height: 20),
-                      SingleChildScrollView(
-                          scrollDirection: Axis.horizontal,
-                          child: _categoriesIcons()),
-                      SizedBox(height: 20),
+                      Container(height: 65, child: _categoriesIcons()),
                       Align(
                           alignment: Alignment.centerLeft,
                           child: Text("Nearby",
                               style: Theme.of(context).textTheme.headline6)),
                       SizedBox(height: 20),
-                      SizedBox(height: 160, child: _nearbyPlaces()),
+                      Container(height: 170, child: _nearbyPlaces()),
                       Align(
                           alignment: Alignment.centerLeft,
                           child: Text("Popular",
                               style: Theme.of(context).textTheme.headline6)),
                       SizedBox(height: 20),
-                      SizedBox(height: 160, child: LocationCard(width: 0.9)),
+                      SizedBox(
+                          height: 160,
+                          child: LocationCard(
+                              width: 0.9,
+                              onTapCard: () {
+                                // TODO: Send data to locationPage
+                                Navigator.pushNamed(context, '/LocationPage');
+                              })),
                     ],
                   )),
             ]))
           ]),
         ));
-  }
-
-  Widget _categoriesIcons() {
-    return Container(
-      margin: EdgeInsets.only(top: 10, bottom: 10),
-      child: Row(children: [
-        RawMaterialButton(
-          onPressed: () {},
-          elevation: 2.0,
-          fillColor: Colors.amberAccent[100],
-          child: FaIcon(
-            FontAwesomeIcons.personBiking,
-            size: 26.0,
-          ),
-          padding: EdgeInsets.all(15.0),
-          shape: CircleBorder(),
-        ),
-        RawMaterialButton(
-          onPressed: () {},
-          elevation: 2.0,
-          fillColor: Colors.amberAccent[100],
-          child: FaIcon(
-            FontAwesomeIcons.personBiking,
-            size: 26.0,
-          ),
-          padding: EdgeInsets.all(15.0),
-          shape: CircleBorder(),
-        ),
-        RawMaterialButton(
-          onPressed: () {},
-          elevation: 2.0,
-          fillColor: Colors.amberAccent[100],
-          child: FaIcon(
-            FontAwesomeIcons.personBiking,
-            size: 26.0,
-          ),
-          padding: EdgeInsets.all(15.0),
-          shape: CircleBorder(),
-        ),
-        RawMaterialButton(
-          onPressed: () {},
-          elevation: 2.0,
-          fillColor: Colors.amberAccent[100],
-          child: FaIcon(
-            FontAwesomeIcons.personBiking,
-            size: 26.0,
-          ),
-          padding: EdgeInsets.all(15.0),
-          shape: CircleBorder(),
-        ),
-        RawMaterialButton(
-          onPressed: () {},
-          elevation: 2.0,
-          fillColor: Colors.amberAccent[100],
-          child: FaIcon(
-            FontAwesomeIcons.personBiking,
-            size: 26.0,
-          ),
-          padding: EdgeInsets.all(15.0),
-          shape: CircleBorder(),
-        ),
-        RawMaterialButton(
-          onPressed: () {},
-          elevation: 2.0,
-          fillColor: Colors.amberAccent[100],
-          child: FaIcon(
-            FontAwesomeIcons.personBiking,
-            size: 26.0,
-          ),
-          padding: EdgeInsets.all(15.0),
-          shape: CircleBorder(),
-        ),
-        RawMaterialButton(
-          onPressed: () {},
-          elevation: 2.0,
-          fillColor: Colors.amberAccent[100],
-          child: FaIcon(
-            FontAwesomeIcons.personBiking,
-            size: 26.0,
-          ),
-          padding: EdgeInsets.all(15.0),
-          shape: CircleBorder(),
-        ),
-        RawMaterialButton(
-          onPressed: () {},
-          elevation: 2.0,
-          fillColor: Colors.amberAccent[100],
-          child: FaIcon(
-            FontAwesomeIcons.personBiking,
-            size: 26.0,
-          ),
-          padding: EdgeInsets.all(15.0),
-          shape: CircleBorder(),
-        ),
-        RawMaterialButton(
-          onPressed: () {},
-          elevation: 2.0,
-          fillColor: Colors.amberAccent[100],
-          child: FaIcon(
-            FontAwesomeIcons.personBiking,
-            size: 26.0,
-          ),
-          padding: EdgeInsets.all(15.0),
-          shape: CircleBorder(),
-        )
-      ]),
-    );
   }
 
   Widget _searchBar(BuildContext context) {
@@ -244,17 +142,45 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
+  Widget _categoriesIcons() {
+    return ListView.builder(
+      scrollDirection: Axis.horizontal,
+      shrinkWrap: true,
+      physics: ClampingScrollPhysics(),
+      padding: EdgeInsets.only(bottom: 5),
+      itemCount: 9,
+      itemBuilder: (BuildContext context, int index) {
+        return CustomIconButton(
+          iconID: 61668,
+          iconFamily: 'FontAwesomeSolid',
+          buttonSize: 60,
+          iconColor: Theme.of(context).iconTheme.color,
+          buttonColor: Colors.amberAccent[100],
+          onButtonPressed: () {
+            //TODO: Filter search
+            print('alo');
+          },
+        );
+      },
+    );
+  }
+
   Widget _nearbyPlaces() {
     return ListView.builder(
         shrinkWrap: true,
         physics: ClampingScrollPhysics(),
-        padding: EdgeInsets.all(5),
+        padding: EdgeInsets.only(left: 5, bottom: 10),
         scrollDirection: Axis.horizontal,
         itemCount: 15,
         itemBuilder: (BuildContext context, int index) {
           return Container(
               margin: EdgeInsets.only(right: 10),
-              child: LocationCard(width: 0.4));
+              child: LocationCard(
+                  width: 0.4,
+                  onTapCard: () {
+                    // TODO: Send data to LocationPage
+                    Navigator.pushNamed(context, '/LocationPage');
+                  }));
         });
   }
 }
