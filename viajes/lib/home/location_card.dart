@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 
 class LocationCard extends StatelessWidget {
   final double width;
-  const LocationCard({super.key, required this.width});
+  final VoidCallback? onTapCard;
+  const LocationCard({super.key, required this.width, this.onTapCard});
 
   @override
   Widget build(BuildContext context) {
@@ -15,7 +16,10 @@ class LocationCard extends StatelessWidget {
               borderRadius: BorderRadius.circular(20),
               clipBehavior: Clip.antiAliasWithSaveLayer,
               child: InkWell(
-                  onTap: () {},
+                  onTap: () {
+                    print(onTapCard);
+                    onTapCard != null ? onTapCard!() : null;
+                  },
                   child: Column(mainAxisSize: MainAxisSize.max, children: [
                     Stack(children: <Widget>[
                       Ink.image(

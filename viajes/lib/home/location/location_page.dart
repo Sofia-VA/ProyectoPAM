@@ -3,6 +3,8 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:viajes/home/location/details_tab.dart';
 import 'package:viajes/home/location/experiences_tab.dart';
 
+import '../../nav_bar.dart';
+
 class LocationPage extends StatefulWidget {
   @override
   _LocationPageState createState() => _LocationPageState();
@@ -45,6 +47,7 @@ class _LocationPageState extends State<LocationPage>
     double expandedHeight = MediaQuery.of(context).size.height * 0.35;
 
     return Scaffold(
+      drawer: NavBar(),
       body: NestedScrollView(
         floatHeaderSlivers: true,
         headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
@@ -70,7 +73,7 @@ class _LocationPageState extends State<LocationPage>
                 leading: IconButton(
                     icon: Icon(Icons.arrow_back_ios),
                     onPressed: () {
-                      //Navigator.pop(context);
+                      Navigator.pop(context);
                     }),
                 actions: [
                   IconButton(
@@ -86,7 +89,6 @@ class _LocationPageState extends State<LocationPage>
               controller: _tabController,
               children: [
                 LocationDetails(),
-                //Text("Experiences Tab"),
                 LocationExperiences(),
                 //TODO: Rethink Q&A widget
                 //Text("Q&A Tab"),

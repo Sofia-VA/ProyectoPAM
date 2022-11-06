@@ -40,7 +40,12 @@ class MyApp extends StatelessWidget {
           // Text Themes
           fontFamily: 'Lato',
           textTheme: TextTheme(bodyText2: TextStyle(height: 1.4))),
-      home: ExperiencePage(),
+      initialRoute: '/',
+      routes: {
+        '/': (context) => HomePage(),
+        '/LocationPage': (context) => LocationPage(),
+        '/ExperiencePage': (context) => ExperiencePage(),
+      },
     );
   }
 }

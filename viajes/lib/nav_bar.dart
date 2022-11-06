@@ -35,6 +35,7 @@ class NavBar extends StatelessWidget {
               onTap: () {
                 // TODO: Send to HomePage
                 Navigator.pop(context);
+                Navigator.pushNamed(context, '/');
               }),
           _menuLoggedIn(context),
           //_menuNotLogged(context),

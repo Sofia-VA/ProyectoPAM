@@ -8,11 +8,6 @@ class LocationExperiences extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final assetImages = const [
-      'assets/images/mountain_sunset.jpg',
-      'assets/images/mountain_night.gif',
-      'assets/images/lake_morning.png',
-    ];
     final List _experiencesList = [
       {
         'title': 'The worst trip in my life',
@@ -70,9 +65,6 @@ class LocationExperiences extends StatelessWidget {
                 padding: EdgeInsets.only(top: 0),
                 itemCount: _experiencesList.length,
                 gridDelegate: SliverWaterfallFlowDelegateWithMaxCrossAxisExtent(
-                  viewportBuilder: (int firstIndex, int lastIndex) {
-                    print("viewport : [$firstIndex,$lastIndex]");
-                  },
                   maxCrossAxisExtent: 300,
                 ),
                 itemBuilder: (context, index) {
@@ -83,41 +75,23 @@ class LocationExperiences extends StatelessWidget {
                     margin: EdgeInsets.all(5),
                     child: Column(
                       children: [
-                        Card(
-                          semanticContainer: true,
-                          clipBehavior: Clip.antiAliasWithSaveLayer,
-                          child: Column(children: [
-                            (hasImage)
-                                ? (_experiencesList[index]['images'][0] !=
-                                            null &&
-                                        !_experiencesList[index]['images'][0]
-                                            .isEmpty
-                                    ? Image.network(
-                                        _experiencesList[index]['images'][0],
-                                        fit: BoxFit.fill,
-                                      )
-                                    : Image.asset(assetImages[
-                                        Random().nextInt(assetImages.length)]))
-                                : Center(),
-                            Container(
-                              width: double.infinity,
-                              padding: EdgeInsets.all(10),
-                              color:
-                                  Colors.teal[Random().nextInt(3) * 100 + 100],
-                              child: Text(_experiencesList[index]['title'],
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.w400,
-                                    height: 1,
-                                  ),
-                                  textAlign: TextAlign.center),
-                            ),
-                          ]),
-                          shape: hasImage
-                              ? RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(10.0),
-                                )
-                              : null,
-                          elevation: 5,
+                        GestureDetector(
+                          onTap: () {
+                            // TODO: Send Data to Experience page
+                            Navigator.pushNamed(context, '/ExperiencePage');
+                          },
+                          child: Card(
+                            semanticContainer: true,
+                            clipBehavior: Clip.antiAliasWithSaveLayer,
+                            child: _cardContent(
+                                context, _experiencesList[index], hasImage),
+                            shape: hasImage
+                                ? RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(10.0),
+                                  )
+                                : null,
+                            elevation: 5,
+                          ),
                         ),
                         Container(
                           padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
@@ -131,9 +105,6 @@ class LocationExperiences extends StatelessWidget {
               ),
             ],
           )
-          // (context, index) {
-
-          //   },
         ])),
       ],
     );
@@ -166,5 +137,34 @@ class LocationExperiences extends StatelessWidget {
         ),
       ],
     );
+  }
+
+  _cardContent(BuildContext context, Map experience, bool hasImage) {
+    final assetImages = const [
+      'assets/images/mountain_sunset.jpg',
+      'assets/images/mountain_night.gif',
+      'assets/images/lake_morning.png',
+    ];
+    return Column(children: [
+      (hasImage)
+          ? (experience['images'][0] != null && !experience['images'][0].isEmpty
+              ? Image.network(
+                  experience['images'][0],
+                  fit: BoxFit.fill,
+                )
+              : Image.asset(assetImages[Random().nextInt(assetImages.length)]))
+          : Center(),
+      Container(
+        width: double.infinity,
+        padding: EdgeInsets.all(10),
+        color: Colors.teal[Random().nextInt(3) * 100 + 100],
+        child: Text(experience['title'],
+            style: TextStyle(
+              fontWeight: FontWeight.w400,
+              height: 1,
+            ),
+            textAlign: TextAlign.center),
+      ),
+    ]);
   }
 }

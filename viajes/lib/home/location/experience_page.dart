@@ -3,6 +3,7 @@ import 'package:flutter_icon_shadow/flutter_icon_shadow.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:viajes/home/location/comments/comment_section.dart';
 
+import '../../nav_bar.dart';
 import 'image_carousel_widget.dart';
 
 class ExperiencePage extends StatefulWidget {
@@ -34,6 +35,7 @@ Integer eget neque tortor. Morbi ligula leo, suscipit et ligula in, molestie dig
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      drawer: NavBar(),
       appBar: AppBar(
           leading: IconButton(
               icon: IconShadow(
@@ -43,7 +45,7 @@ Integer eget neque tortor. Morbi ligula leo, suscipit et ligula in, molestie dig
                 shadowBlurSigma: 1,
               ),
               onPressed: () {
-                //Navigator.pop(context);
+                Navigator.pop(context);
               }),
           actions: [
             IconButton(
