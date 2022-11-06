@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_icon_shadow/flutter_icon_shadow.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:viajes/home/location/comments/comment_section.dart';
 
-import '../../nav_bar.dart';
-import 'image_carousel_widget.dart';
+import '../../../nav_bar.dart';
+import '../comments/comment_section.dart';
+import '../image_carousel_widget.dart';
 
 class ExperiencePage extends StatefulWidget {
   const ExperiencePage({super.key});

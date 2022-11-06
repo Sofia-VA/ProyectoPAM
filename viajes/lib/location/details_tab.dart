@@ -3,7 +3,8 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:readmore/readmore.dart';
-import 'package:viajes/home/location/custom_label_list.dart';
+
+import 'custom_label_list.dart';
 
 class LocationDetails extends StatefulWidget {
   const LocationDetails({super.key});

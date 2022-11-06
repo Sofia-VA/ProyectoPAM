@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:viajes/home/location/details_tab.dart';
-import 'package:viajes/home/location/experiences_tab.dart';
 
 import '../../nav_bar.dart';
+import 'details_tab.dart';
+import 'experiences/experiences_tab.dart';
 
 class LocationPage extends StatefulWidget {
   @override

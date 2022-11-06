@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:viajes/home/home_page.dart';
-import 'package:viajes/home/location/comments/bloc/comment_bloc.dart';
-import 'package:viajes/home/location/location_page.dart';
 
-import 'home/location/experience_page.dart';
+import 'location/comments/bloc/comment_bloc.dart';
+import 'location/experiences/experience_page.dart';
+import 'location/location_page.dart';
 
 void main() {
   runApp(

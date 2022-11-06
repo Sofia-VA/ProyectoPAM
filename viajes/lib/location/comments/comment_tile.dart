@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:viajes/home/location/comments/bloc/comment_bloc.dart';
+
+import 'bloc/comment_bloc.dart';
 
 class CommentTile extends StatefulWidget {
   final String comment;

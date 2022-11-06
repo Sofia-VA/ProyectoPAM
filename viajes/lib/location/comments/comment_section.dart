@@ -4,9 +4,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
-import 'package:viajes/home/location/comments/bloc/comment_bloc.dart';
-import 'package:viajes/home/location/comments/comment_tile.dart';
 import 'dart:async';
+
+import 'bloc/comment_bloc.dart';
+import 'comment_tile.dart';
 
 late StreamSubscription<bool> keyboardSubscription;
 
