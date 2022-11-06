@@ -6,7 +6,7 @@ class CustomIconButton extends StatelessWidget {
   final Color? iconColor;
   final Color? buttonColor;
   final double buttonSize;
-  final onButtonPressed;
+  final VoidCallback? onButtonPressed;
 
   CustomIconButton({
     super.key,
@@ -24,7 +24,9 @@ class CustomIconButton extends StatelessWidget {
       padding: EdgeInsets.only(bottom: 10),
       child: ElevatedButton(
         onPressed: () {
-          onButtonPressed();
+          if (onButtonPressed != null) {
+            onButtonPressed!();
+          }
         },
         style: ElevatedButton.styleFrom(
             padding: EdgeInsets.zero,
