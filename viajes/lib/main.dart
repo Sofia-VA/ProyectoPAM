@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:viajes/home/home_page.dart';
 
-import 'location/comments/bloc/comment_bloc.dart';
+import 'custom_widgets/comments/bloc/comment_bloc.dart';
 import 'location/experiences/experience_page.dart';
 import 'location/location_page.dart';
 
