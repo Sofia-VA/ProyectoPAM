@@ -7,7 +7,8 @@ import '../../custom_widgets/nav_bar.dart';
 import '../../custom_widgets/image_carousel_widget.dart';
 
 class ExperiencePage extends StatefulWidget {
-  const ExperiencePage({super.key});
+  final Map experience;
+  const ExperiencePage({super.key, required this.experience});
 
   @override
   State<ExperiencePage> createState() => _ExperiencePageState();
@@ -24,13 +25,13 @@ class _ExperiencePageState extends State<ExperiencePage> {
     'assets/images/lake_morning.png',
   ];
 
-  final description =
-      '''Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam gravida tortor ante, a blandit libero lobortis ut. Mauris vehicula tortor ut ex ultricies sodales. Proin ultrices eleifend diam eget congue. Sed iaculis aliquet diam, ac tempus enim. Maecenas scelerisque sodales massa in lacinia. Proin porta mi diam, eu interdum nibh elementum a. Proin vestibulum libero justo, a tincidunt urna vehicula in. Nam vitae mauris diam. Nam in lacinia arcu, vitae consectetur lacus. Quisque et odio lacus. Suspendisse ligula elit, mattis sit amet venenatis placerat, luctus non enim.
+//   final text =
+//       '''Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam gravida tortor ante, a blandit libero lobortis ut. Mauris vehicula tortor ut ex ultricies sodales. Proin ultrices eleifend diam eget congue. Sed iaculis aliquet diam, ac tempus enim. Maecenas scelerisque sodales massa in lacinia. Proin porta mi diam, eu interdum nibh elementum a. Proin vestibulum libero justo, a tincidunt urna vehicula in. Nam vitae mauris diam. Nam in lacinia arcu, vitae consectetur lacus. Quisque et odio lacus. Suspendisse ligula elit, mattis sit amet venenatis placerat, luctus non enim.
 
-Integer ac fermentum neque. Aenean ipsum metus, cursus sed nisl quis, fermentum sagittis elit. Aliquam pulvinar sapien vitae ligula auctor blandit. Fusce vel tristique lorem. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Quisque at nibh nunc. Interdum et malesuada fames ac ante ipsum primis in faucibus. Donec suscipit risus erat, dapibus pretium enim vestibulum in. Sed sed lorem non est pretium mollis non eget velit. Donec fermentum pretium lectus quis suscipit. Sed eu elit efficitur diam convallis tincidunt. Nullam consequat vehicula nisi, ut euismod lacus interdum vitae. Curabitur ornare felis et dui mollis rhoncus. Sed eu felis mi. Morbi eros lorem, consequat eget tincidunt eu, imperdiet a est.
+// Integer ac fermentum neque. Aenean ipsum metus, cursus sed nisl quis, fermentum sagittis elit. Aliquam pulvinar sapien vitae ligula auctor blandit. Fusce vel tristique lorem. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Quisque at nibh nunc. Interdum et malesuada fames ac ante ipsum primis in faucibus. Donec suscipit risus erat, dapibus pretium enim vestibulum in. Sed sed lorem non est pretium mollis non eget velit. Donec fermentum pretium lectus quis suscipit. Sed eu elit efficitur diam convallis tincidunt. Nullam consequat vehicula nisi, ut euismod lacus interdum vitae. Curabitur ornare felis et dui mollis rhoncus. Sed eu felis mi. Morbi eros lorem, consequat eget tincidunt eu, imperdiet a est.
 
-Integer eget neque tortor. Morbi ligula leo, suscipit et ligula in, molestie dignissim est. Phasellus metus enim, condimentum at consequat vitae, ultrices sed tellus. Donec vel luctus ante, a pellentesque tortor. Donec ligula velit, consectetur in metus sit amet, sollicitudin ultricies nibh. Maecenas aliquam pharetra nisi. Curabitur feugiat vulputate finibus. Sed arcu eros, rhoncus vitae purus et, aliquet tincidunt mauris. Duis iaculis lacinia neque in tempus. Suspendisse gravida rhoncus nisl vel fermentum. Praesent eu nibh dolor.
-''';
+// Integer eget neque tortor. Morbi ligula leo, suscipit et ligula in, molestie dignissim est. Phasellus metus enim, condimentum at consequat vitae, ultrices sed tellus. Donec vel luctus ante, a pellentesque tortor. Donec ligula velit, consectetur in metus sit amet, sollicitudin ultricies nibh. Maecenas aliquam pharetra nisi. Curabitur feugiat vulputate finibus. Sed arcu eros, rhoncus vitae purus et, aliquet tincidunt mauris. Duis iaculis lacinia neque in tempus. Suspendisse gravida rhoncus nisl vel fermentum. Praesent eu nibh dolor.
+// ''';
 
   @override
   Widget build(BuildContext context) {
@@ -49,7 +50,9 @@ Integer eget neque tortor. Morbi ligula leo, suscipit et ligula in, molestie dig
               }),
           actions: [
             IconButton(
-                onPressed: () {},
+                onPressed: () {
+                  // TODO: Like experience
+                },
                 icon: IconShadow(
                   Icon(Icons.favorite),
                   shadowOffset: Offset.fromDirection(1, 2),
@@ -62,7 +65,7 @@ Integer eget neque tortor. Morbi ligula leo, suscipit et ligula in, molestie dig
         child: Column(
           children: [
             SizedBox(height: 20),
-            ImageCarousel(galleryImages: galleryImages),
+            ImageCarousel(galleryImages: widget.experience['images']),
             SizedBox(height: 20),
             Container(
                 padding: EdgeInsets.fromLTRB(22, 22, 22, 0),
@@ -77,12 +80,15 @@ Integer eget neque tortor. Morbi ligula leo, suscipit et ligula in, molestie dig
                     Divider(thickness: 2),
                     SizedBox(height: 20),
                     Text(
-                      description,
+                      widget.experience['text'],
                       textAlign: TextAlign.justify,
                     ),
                   ],
                 )),
-            CommentSection(anchor: commentSectionAnchor)
+            CommentSection(
+              anchor: commentSectionAnchor,
+              parentID: widget.experience['experienceID'],
+            )
           ],
         ),
       ),
@@ -94,13 +100,14 @@ Integer eget neque tortor. Morbi ligula leo, suscipit et ligula in, molestie dig
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Flexible(
-            child: Text("Experience Post Title",
+            child: Text(widget.experience['title'] ?? "Experience Post Title",
                 style: Theme.of(context).textTheme.headline5)),
         Row(
           children: [
             Icon(Icons.star, size: 25, color: Colors.amberAccent),
             SizedBox(width: 3),
-            Text('4.5', style: Theme.of(context).textTheme.bodyLarge),
+            Text('${widget.experience['ratedStars']}',
+                style: Theme.of(context).textTheme.bodyLarge),
           ],
         ),
       ],
@@ -116,16 +123,21 @@ Integer eget neque tortor. Morbi ligula leo, suscipit et ligula in, molestie dig
           children: [
             Icon(Icons.date_range, size: 25),
             SizedBox(width: 3),
-            Text('12/11/2022'),
+            Text('${widget.experience['date']}'),
           ],
         ),
       ),
       Flexible(
         child: ListTile(
-            title: Text("by Long Username Name", textAlign: TextAlign.end),
+            title: Text("by ${widget.experience['author']}",
+                textAlign: TextAlign.end),
             trailing: CircleAvatar(
                 radius: 18,
-                child: Icon(Icons.person),
+                child: widget.experience['authorPicture'] ||
+                        !widget.experience['authorPicture'].isEmpty
+                    ? ClipOval(
+                        child: Image.network(widget.experience['author']))
+                    : Icon(Icons.person),
                 backgroundColor: Theme.of(context).listTileTheme.iconColor),
             onTap: () {
               // TODO: Send to ProfilePage
@@ -142,17 +154,20 @@ Integer eget neque tortor. Morbi ligula leo, suscipit et ligula in, molestie dig
         Flexible(
           child: ListTile(
             leading: IconButton(
-                onPressed: () {},
+                onPressed: () {
+                  //TODO: Send to location page
+                },
                 icon: FaIcon(FontAwesomeIcons.locationDot, size: 25)),
             title: Transform.translate(
               offset: Offset(-16, 0),
-              child: Text("Place Name",
+              child: Text(
+                  widget.experience['placeInfo']['placeName'] ?? "Place Name",
                   style: Theme.of(context).textTheme.labelLarge),
             ),
             subtitle: Transform.translate(
               offset: Offset(-16, 0),
               child: Text(
-                "City, Country",
+                "${widget.experience['placeInfo']['placeCity']}, ${widget.experience['placeInfo']['placeCountry']}",
                 style: Theme.of(context).textTheme.bodyMedium,
               ),
             ),
@@ -162,7 +177,8 @@ Integer eget neque tortor. Morbi ligula leo, suscipit et ligula in, molestie dig
           children: [
             Icon(Icons.monetization_on, size: 25),
             SizedBox(width: 3),
-            Text('Free', style: Theme.of(context).textTheme.bodyLarge),
+            Text('${widget.experience['registeredCost']}',
+                style: Theme.of(context).textTheme.bodyLarge),
           ],
         ),
         IconButton(

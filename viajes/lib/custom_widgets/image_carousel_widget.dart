@@ -13,6 +13,8 @@ class ImageCarousel extends StatefulWidget {
   State<ImageCarousel> createState() => _ImageCarouselState();
 }
 
+// TODO: Handle a single, 2, and null images
+
 class _ImageCarouselState extends State<ImageCarousel> {
   @override
   Widget build(BuildContext context) {

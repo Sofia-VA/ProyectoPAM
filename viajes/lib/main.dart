@@ -46,7 +46,9 @@ class MyApp extends StatelessWidget {
         '/LocationPage': (context) => LocationPage(
               locationID: null,
             ),
-        '/ExperiencePage': (context) => ExperiencePage(),
+        '/ExperiencePage': (context) => ExperiencePage(
+              experience: {},
+            ),
       },
     );
   }
