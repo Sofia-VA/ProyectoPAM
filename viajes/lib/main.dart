@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:provider/provider.dart';
 
 import 'package:viajes/home/home_page.dart';
 
 import 'custom_widgets/comments/bloc/comment_bloc.dart';
+import 'home/bloc/home_bloc.dart';
+import 'location/bloc/location_bloc.dart';
 import 'location/experiences/experience_page.dart';
+import 'location/experiences/experience_provider.dart';
 import 'location/location_page.dart';
 
 void main() {
@@ -12,8 +16,12 @@ void main() {
     MultiBlocProvider(
       providers: [
         BlocProvider(create: (context) => CommentBloc()),
+        BlocProvider(create: (context) => LocationBloc()),
+        BlocProvider(create: (context) => HomeBloc()),
       ],
-      child: MyApp(),
+      child: MultiProvider(providers: [
+        Provider<ExperienceProvider>(create: (_) => ExperienceProvider()),
+      ], child: MyApp()),
     ),
   );
 }
