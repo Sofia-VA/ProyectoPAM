@@ -4,10 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:readmore/readmore.dart';
 
-import 'custom_label_list.dart';
+import '../custom_widgets/custom_label_list.dart';
 
 class LocationDetails extends StatefulWidget {
-  const LocationDetails({super.key});
+  final Map location;
+  const LocationDetails({super.key, required this.location});
 
   @override
   State<LocationDetails> createState() => _LocationDetailsState();
@@ -51,9 +52,9 @@ class _LocationDetailsState extends State<LocationDetails> {
                 SizedBox(height: 20),
                 _generalInfoIcons(),
                 SizedBox(height: 20),
-                _activitiesIcons(activities),
+                _activitiesIcons(widget.location['activities']),
                 SizedBox(height: 20),
-                _placeTags(context, tags),
+                _placeTags(context, widget.location['tags']),
               ],
             ))
       ]))
@@ -65,7 +66,7 @@ class _LocationDetailsState extends State<LocationDetails> {
       Divider(),
       Align(
           alignment: Alignment.center,
-          child: Text("Place Name",
+          child: Text("${widget.location['name']}",
               textAlign: TextAlign.left,
               style: Theme.of(context).textTheme.headline6)),
       Divider(),
@@ -76,7 +77,7 @@ class _LocationDetailsState extends State<LocationDetails> {
             children: [
               Icon(Icons.star, color: Colors.amberAccent),
               SizedBox(width: 3),
-              Text("4.5"),
+              Text("${widget.location['ratedStars']}"),
             ],
           ),
           SizedBox(width: 10),
@@ -84,7 +85,7 @@ class _LocationDetailsState extends State<LocationDetails> {
             children: [
               Icon(Icons.park),
               SizedBox(width: 3),
-              Text("Place Type"),
+              Text("${widget.location['type']}"),
             ],
           ),
           SizedBox(width: 10),
@@ -92,7 +93,7 @@ class _LocationDetailsState extends State<LocationDetails> {
             children: [
               Icon(Icons.favorite),
               SizedBox(width: 3),
-              Text("312"),
+              Text("${widget.location['favorites']}"),
             ],
           ),
         ],
@@ -114,7 +115,8 @@ class _LocationDetailsState extends State<LocationDetails> {
             //color: Theme.of(context).primaryColor,
             borderRadius: BorderRadius.all(Radius.circular(10))),
         child: ReadMoreText(
-          "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec egestas ligula eget neque feugiat, non varius ipsum posuere. Cras lacinia luctus diam, nec sodales tellus aliquet non. Etiam tincidunt ex a est tincidunt sollicitudin. Pellentesque eget turpis nisl. Proin mollis vehicula placerat. Pellentesque aliquet scelerisque pulvinar. Maecenas et ex cursus, placerat eros a, viverra tellus. Etiam sodales porttitor efficitur. Suspendisse pellentesque dolor dictum lacus laoreet, a malesuada neque rutrum. Pellentesque nunc eros, viverra quis erat ac, vestibulum aliquam turpis. Aliquam tempor ultrices justo ac malesuada.",
+          widget.location['description'],
+          //"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec egestas ligula eget neque feugiat, non varius ipsum posuere. Cras lacinia luctus diam, nec sodales tellus aliquet non. Etiam tincidunt ex a est tincidunt sollicitudin. Pellentesque eget turpis nisl. Proin mollis vehicula placerat. Pellentesque aliquet scelerisque pulvinar. Maecenas et ex cursus, placerat eros a, viverra tellus. Etiam sodales porttitor efficitur. Suspendisse pellentesque dolor dictum lacus laoreet, a malesuada neque rutrum. Pellentesque nunc eros, viverra quis erat ac, vestibulum aliquam turpis. Aliquam tempor ultrices justo ac malesuada.",
           trimLines: 4,
           trimMode: TrimMode.Line,
           moreStyle: TextStyle(color: Theme.of(context).primaryColor),
@@ -137,21 +139,21 @@ class _LocationDetailsState extends State<LocationDetails> {
               children: [
                 Icon(Icons.monetization_on),
                 SizedBox(width: 3),
-                Text("210 USD"),
+                Text("${widget.location['averageCost']} USD"),
               ],
             ),
             Row(
               children: [
                 FaIcon(FontAwesomeIcons.cloudRain, size: 19),
                 SizedBox(width: 5),
-                Text("Rainy"),
+                Text("${widget.location['averageWeather']}"),
               ],
             ),
             Row(
               children: [
                 FaIcon(FontAwesomeIcons.peopleLine, size: 19),
                 SizedBox(width: 5),
-                Text("2k+ daily"),
+                Text("${widget.location['averageVisitors']}"),
               ],
             ),
           ],
@@ -164,7 +166,7 @@ class _LocationDetailsState extends State<LocationDetails> {
               children: [
                 FaIcon(FontAwesomeIcons.clock),
                 SizedBox(width: 5),
-                Text("Open Now"),
+                Text("${widget.location['scheduleState']}"),
               ],
             ),
           ],

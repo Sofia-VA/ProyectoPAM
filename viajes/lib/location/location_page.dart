@@ -1,11 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
-import '../../nav_bar.dart';
+import '../custom_widgets/nav_bar.dart';
+import 'bloc/location_bloc.dart';
 import 'details_tab.dart';
 import 'experiences/experiences_tab.dart';
 
 class LocationPage extends StatefulWidget {
+  final locationID;
+
+  const LocationPage({super.key, required this.locationID});
+
   @override
   _LocationPageState createState() => _LocationPageState();
 }
@@ -44,69 +50,119 @@ class _LocationPageState extends State<LocationPage>
 
   @override
   Widget build(BuildContext context) {
+    var location = {};
+    var experiences = [];
+    bool isFavorite = false;
     double expandedHeight = MediaQuery.of(context).size.height * 0.35;
 
-    return Scaffold(
-      drawer: NavBar(),
-      body: NestedScrollView(
-        floatHeaderSlivers: true,
-        headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
-          return <Widget>[
-            SliverAppBar(
-                expandedHeight: expandedHeight,
-                floating: false,
-                pinned: true,
-                snap: false,
-                stretch: true,
-                centerTitle: true,
-                // TODO: Fading title
-                title: innerBoxIsScrolled ? Text("Place name") : Text(""),
-                flexibleSpace: FlexibleSpaceBar(
-                  background: flexibleSpaceWidgetv2(
-                      context, expandedHeight), //flexibleSpaceWidget(context),
+    return BlocConsumer<LocationBloc, LocationState>(
+      listener: (context, state) {
+        //Controller listener
+        _tabController.addListener(() {
+          print('my index is' + _tabController.index.toString());
+          if (_tabController.index == 2 && experiences.isEmpty) {
+            // TODO: Implementation question -> Fetch experiences on change? or pre-change?
+            // BlocProvider.of<LocationBloc>(context)
+            //       .add(RefreshLocationDetailsEvent(locationID: widget.locationID));
+          }
+        });
+        if (state is LocationInitial) {
+          BlocProvider.of<LocationBloc>(context)
+              .add(RefreshLocationDetailsEvent(locationID: widget.locationID));
+          BlocProvider.of<LocationBloc>(context)
+              .add(CheckFavoriteEvent(locationID: widget.locationID));
+          BlocProvider.of<LocationBloc>(context).add(
+              RefreshLocationExperiencesEvent(locationID: widget.locationID));
+        } else if (state is GeneralErrorState) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('state.msg')),
+          );
+        } else if (state is LoadingDetailsState) {
+          // TODO: Implement loading animations
+        } else if (state is LoadingExperiencesState) {
+          // TODO: Implement loading animations
+        } else if (state is RefreshDetailsState) {
+          location = state.location;
+        } else if (state is RefreshExperiencesState) {
+          experiences = state.experiences;
+        } else if (state is SuccessFavoriteAddState) {
+          isFavorite = true;
+        }
+      },
+      builder: (context, state) {
+        return Scaffold(
+          drawer: NavBar(),
+          body: NestedScrollView(
+            floatHeaderSlivers: true,
+            headerSliverBuilder:
+                (BuildContext context, bool innerBoxIsScrolled) {
+              return <Widget>[
+                SliverAppBar(
+                    expandedHeight: expandedHeight,
+                    floating: false,
+                    pinned: true,
+                    snap: false,
+                    stretch: true,
+                    centerTitle: true,
+                    // TODO: Fading title
+                    title: innerBoxIsScrolled
+                        ? Text("${location['name']}")
+                        : Text(""),
+                    flexibleSpace: FlexibleSpaceBar(
+                      background: flexibleSpaceWidgetv2(context, expandedHeight,
+                          location, isFavorite), //flexibleSpaceWidget(context),
 
-                  stretchModes: [
-                    StretchMode.blurBackground,
-                    StretchMode.zoomBackground
+                      stretchModes: [
+                        StretchMode.blurBackground,
+                        StretchMode.zoomBackground
+                      ],
+                    ),
+                    leading: IconButton(
+                        icon: Icon(Icons.arrow_back_ios),
+                        onPressed: () {
+                          Navigator.pop(context);
+                        }),
+                    actions: [
+                      IconButton(
+                          onPressed: () {
+                            // TODO: Navigate Write Experience Page
+                          },
+                          icon: FaIcon(FontAwesomeIcons.featherPointed)),
+                    ],
+                    bottom: _tabBar),
+              ];
+            },
+            body: Column(children: [
+              Expanded(
+                child: TabBarView(
+                  controller: _tabController,
+                  children: [
+                    LocationDetails(location: location),
+                    LocationExperiences(experiences: experiences),
+                    //TODO: Rethink Q&A widget
+                    //Text("Q&A Tab"),
                   ],
                 ),
-                leading: IconButton(
-                    icon: Icon(Icons.arrow_back_ios),
-                    onPressed: () {
-                      Navigator.pop(context);
-                    }),
-                actions: [
-                  IconButton(
-                      onPressed: () {},
-                      icon: FaIcon(FontAwesomeIcons.featherPointed)),
-                ],
-                bottom: _tabBar),
-          ];
-        },
-        body: Column(children: [
-          Expanded(
-            child: TabBarView(
-              controller: _tabController,
-              children: [
-                LocationDetails(),
-                LocationExperiences(),
-                //TODO: Rethink Q&A widget
-                //Text("Q&A Tab"),
-              ],
-            ),
+              ),
+            ]),
           ),
-        ]),
-      ),
+        );
+      },
     );
   }
 
-  Widget flexibleSpaceWidgetv2(BuildContext context, double expandedHeight) {
+  Widget flexibleSpaceWidgetv2(BuildContext context, double expandedHeight,
+      Map location, bool isFavorite) {
     return Container(
         height: expandedHeight + kToolbarHeight,
         width: double.infinity,
         decoration: BoxDecoration(
             image: DecorationImage(
-                image: AssetImage('assets/images/mountain_sunset.jpg'),
+                image: (location['mainImage'] != null &&
+                        !location['mainImage'].isEmpty)
+                    ? NetworkImage('${location['mainImage']}')
+                    : AssetImage('assets/images/mountain_sunset.jpg')
+                        as ImageProvider,
                 fit: BoxFit.cover,
                 colorFilter: ColorFilter.mode(
                     Colors.black.withOpacity(0.3), BlendMode.srcOver))),
@@ -118,12 +174,12 @@ class _LocationPageState extends State<LocationPage>
             children: [
               Column(
                 children: [
-                  Text('Place Name',
+                  Text('${location['name']}',
                       style: TextStyle(
                           color: Colors.white,
                           fontWeight: FontWeight.w400,
                           fontSize: 25)),
-                  Text('City, Country',
+                  Text('${location['city']}, ${location['country']}',
                       style: TextStyle(color: Colors.white, fontSize: 16)),
                 ],
               ),
@@ -132,20 +188,33 @@ class _LocationPageState extends State<LocationPage>
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   IconButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        // TODO: Navigate to location page [location['mapLocation']]
+                      },
                       icon: FaIcon(FontAwesomeIcons.locationDot,
                           color: Colors.white, size: 30)),
                   SizedBox(width: 20),
                   IconButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        // TODO: Add to favorite places
+                        if (!isFavorite) {
+                          BlocProvider.of<LocationBloc>(context).add(
+                              AddToFavoritesEvent(
+                                  locationID: widget.locationID));
+                        }
+                      },
                       icon: Icon(
                         Icons.favorite,
-                        color: Colors.white,
+                        color: isFavorite
+                            ? Theme.of(context).primaryColor
+                            : Colors.white,
                         size: 30,
                       )),
                   SizedBox(width: 20),
                   IconButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        // TODO: Navigate to Add to schedule page
+                      },
                       icon: FaIcon(FontAwesomeIcons.calendarPlus,
                           color: Colors.white, size: 30)),
                 ],
@@ -154,50 +223,4 @@ class _LocationPageState extends State<LocationPage>
           ),
         ));
   }
-}
-
-Widget flexibleSpaceWidget(BuildContext context) {
-  return Stack(clipBehavior: Clip.antiAliasWithSaveLayer, children: [
-    Container(
-      color: Colors.teal,
-    ),
-    Container(
-      height: 200,
-      width: MediaQuery.of(context).size.width,
-      decoration: BoxDecoration(
-          image: DecorationImage(
-        image: AssetImage('assets/images/mountain_sunset.jpg'),
-        fit: BoxFit.cover,
-        // colorFilter: ColorFilter.mode(
-        //     Colors.black.withOpacity(0.5), BlendMode.srcOver)
-      )),
-      child: null,
-    ),
-    Positioned(
-      top: MediaQuery.of(context).size.height / 4.9,
-      height: MediaQuery.of(context).size.height / 10,
-      width: MediaQuery.of(context).size.width / 1.5,
-      child: Container(
-        child: ListTile(
-          title: Text('Place Name',
-              style: TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 20)),
-          subtitle:
-              Text('City, Country', style: TextStyle(color: Colors.white)),
-          leading: IconButton(
-              onPressed: () {},
-              icon: FaIcon(FontAwesomeIcons.locationDot,
-                  size: 30, color: Colors.white)),
-        ),
-        decoration: BoxDecoration(
-          color: Colors.teal[800],
-          borderRadius: BorderRadius.only(
-              bottomRight: Radius.circular(12), topRight: Radius.circular(12)),
-        ),
-        height: MediaQuery.of(context).size.height / 12,
-      ),
-    ),
-  ]);
 }

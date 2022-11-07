@@ -4,54 +4,56 @@ import 'package:waterfall_flow/waterfall_flow.dart';
 import 'package:flutter/material.dart';
 
 class LocationExperiences extends StatelessWidget {
-  const LocationExperiences({super.key});
+  List experiences;
+
+  LocationExperiences({super.key, required List this.experiences});
 
   @override
   Widget build(BuildContext context) {
-    final List _experiencesList = [
-      {
-        'title': 'The worst trip in my life',
-        'author': 'AuthorUserName',
-        'images': ['', ''],
-        'likes': 12
-      },
-      {
-        'title': 'I love this place!',
-        'author': 'AuthorUserName2',
-        'images': [],
-        'likes': 3
-      },
-      {
-        'title': 'A great place to spend some quiet time',
-        'author': 'AuthorUserName334',
-        'images': [''],
-        'likes': 122
-      },
-      {
-        'title': 'This year was not as good as the last one',
-        'author': 'ShortUsername',
-        'images': [''],
-        'likes': 122
-      },
-      {
-        'title': 'I can guide you if you\'d like!',
-        'author': 'EpicTraveler',
-        'images': [],
-        'likes': 1000
-      },
-      {
-        'title': 'Pretty cool!',
-        'author': 'AuthorUserName334',
-        'images': [],
-        'likes': 34
-      },
-      {
-        'title': 'A great place to spend some quiet time',
-        'author': 'AuthorUserName334',
-        'images': [''],
-        'likes': 122
-      }
-    ];
+    // final List experiences = [
+    //   {
+    //     'title': 'The worst trip in my life',
+    //     'author': 'AuthorUserName',
+    //     'images': ['', ''],
+    //     'likes': 12
+    //   },
+    //   {
+    //     'title': 'I love this place!',
+    //     'author': 'AuthorUserName2',
+    //     'images': [],
+    //     'likes': 3
+    //   },
+    //   {
+    //     'title': 'A great place to spend some quiet time',
+    //     'author': 'AuthorUserName334',
+    //     'images': [''],
+    //     'likes': 122
+    //   },
+    //   {
+    //     'title': 'This year was not as good as the last one',
+    //     'author': 'ShortUsername',
+    //     'images': [''],
+    //     'likes': 122
+    //   },
+    //   {
+    //     'title': 'I can guide you if you\'d like!',
+    //     'author': 'EpicTraveler',
+    //     'images': [],
+    //     'likes': 1000
+    //   },
+    //   {
+    //     'title': 'Pretty cool!',
+    //     'author': 'AuthorUserName334',
+    //     'images': [],
+    //     'likes': 34
+    //   },
+    //   {
+    //     'title': 'A great place to spend some quiet time',
+    //     'author': 'AuthorUserName334',
+    //     'images': [''],
+    //     'likes': 122
+    //   }
+    // ];
     return CustomScrollView(
       slivers: <Widget>[
         SliverList(
@@ -63,14 +65,13 @@ class LocationExperiences extends StatelessWidget {
                 physics: ClampingScrollPhysics(),
                 shrinkWrap: true,
                 padding: EdgeInsets.only(top: 0),
-                itemCount: _experiencesList.length,
+                itemCount: experiences.length,
                 gridDelegate: SliverWaterfallFlowDelegateWithMaxCrossAxisExtent(
                   maxCrossAxisExtent: 300,
                 ),
                 itemBuilder: (context, index) {
-                  bool hasImage = _experiencesList[index]['images'].length > 0
-                      ? true
-                      : false;
+                  bool hasImage =
+                      experiences[index]['images'].length > 0 ? true : false;
                   return Container(
                     margin: EdgeInsets.all(5),
                     child: Column(
@@ -84,7 +85,7 @@ class LocationExperiences extends StatelessWidget {
                             semanticContainer: true,
                             clipBehavior: Clip.antiAliasWithSaveLayer,
                             child: _cardContent(
-                                context, _experiencesList[index], hasImage),
+                                context, experiences[index], hasImage),
                             shape: hasImage
                                 ? RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(10.0),
@@ -95,8 +96,7 @@ class LocationExperiences extends StatelessWidget {
                         ),
                         Container(
                           padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
-                          child:
-                              _cardSubtitle(context, _experiencesList[index]),
+                          child: _cardSubtitle(context, experiences[index]),
                         ),
                       ],
                     ),

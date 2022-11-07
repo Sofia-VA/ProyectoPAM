@@ -43,7 +43,9 @@ class MyApp extends StatelessWidget {
       initialRoute: '/',
       routes: {
         '/': (context) => HomePage(),
-        '/LocationPage': (context) => LocationPage(),
+        '/LocationPage': (context) => LocationPage(
+              locationID: null,
+            ),
         '/ExperiencePage': (context) => ExperiencePage(),
       },
     );
