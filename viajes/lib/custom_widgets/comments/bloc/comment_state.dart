@@ -13,6 +13,8 @@ class FocusCommentBoxState extends CommentState {
   final mainComment;
 
   FocusCommentBoxState({required this.mainComment});
+  @override
+  List<Object> get props => [mainComment];
 }
 
 class LoadingCommentsState extends CommentState {}
@@ -24,12 +26,17 @@ class ShowRepliesRequestState extends CommentState {
   final List replies;
 
   ShowRepliesRequestState({required this.mainComment, required this.replies});
+
+  @override
+  List<Object> get props => [mainComment, replies];
 }
 
 class SuccessLikedCommentState extends CommentState {
   final String msg;
 
   SuccessLikedCommentState(this.msg);
+  @override
+  List<Object> get props => [msg];
 }
 
 // On success commenting, deleting, updating
@@ -54,4 +61,6 @@ class GeneralErrorState extends CommentState {
   final String msg;
 
   GeneralErrorState(this.msg);
+  @override
+  List<Object> get props => [msg];
 }

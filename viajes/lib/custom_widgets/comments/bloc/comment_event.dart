@@ -29,12 +29,16 @@ class ShowRepliesEvent extends CommentEvent {
   final commentID;
 
   ShowRepliesEvent({required this.commentID});
+  @override
+  List<Object> get props => [commentID];
 }
 
 class LikeCommentEvent extends CommentEvent {
   final commentID;
 
   LikeCommentEvent({required this.commentID});
+  @override
+  List<Object> get props => [commentID];
 }
 
 class PostCommentEvent extends CommentEvent {
@@ -42,6 +46,8 @@ class PostCommentEvent extends CommentEvent {
   final experienceID;
 
   PostCommentEvent({required this.comment, required this.experienceID});
+  @override
+  List<Object> get props => [comment, experienceID];
 }
 
 class PostReplyEvent extends CommentEvent {
@@ -49,6 +55,8 @@ class PostReplyEvent extends CommentEvent {
   final rootCommentID;
 
   PostReplyEvent({required this.reply, required this.rootCommentID});
+  @override
+  List<Object> get props => [reply, rootCommentID];
 }
 
 class DeleteCommentEvent extends CommentEvent {
@@ -56,6 +64,8 @@ class DeleteCommentEvent extends CommentEvent {
   final experienceID;
 
   DeleteCommentEvent({required this.commentID, required this.experienceID});
+  @override
+  List<Object> get props => [commentID, experienceID];
 }
 
 class DeleteReplyEvent extends CommentEvent {
@@ -63,12 +73,16 @@ class DeleteReplyEvent extends CommentEvent {
   final rootCommentID;
 
   DeleteReplyEvent({required this.commentID, required this.rootCommentID});
+  @override
+  List<Object> get props => [commentID, rootCommentID];
 }
 
 class EditCommentEvent extends CommentEvent {
   final commentID;
 
   EditCommentEvent({required this.commentID});
+  @override
+  List<Object> get props => [commentID];
 }
 
 class UpdateCommentEvent extends CommentEvent {
@@ -80,6 +94,8 @@ class UpdateCommentEvent extends CommentEvent {
       {required this.newComment,
       required this.commentID,
       required this.experienceID});
+  @override
+  List<Object> get props => [newComment, commentID, experienceID];
 }
 
 class UpdateReplyEvent extends CommentEvent {
@@ -91,4 +107,6 @@ class UpdateReplyEvent extends CommentEvent {
       {required this.newReply,
       required this.commentID,
       required this.rootCommentID});
+  @override
+  List<Object> get props => [newReply, commentID, rootCommentID];
 }
