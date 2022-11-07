@@ -24,6 +24,13 @@ class CommentBloc extends Bloc<CommentEvent, CommentState> {
     on<UpdateReplyEvent>(_updateReply);
   }
 
+  FutureOr<void> _getExperienceComments(
+      GetExperienceComments event, Emitter<CommentState> emit) {
+    emit(LoadingCommentsState());
+    final comments = _getComments(event.experienceID);
+    emit(RefreshCommentsState(comments: comments));
+  }
+
   FutureOr<void> _changeFocus(
       WriteToCommentBoxEvent event, Emitter<CommentState> emit) {
     emit(FocusCommentBoxState(mainComment: event.mainComment));
@@ -31,6 +38,7 @@ class CommentBloc extends Bloc<CommentEvent, CommentState> {
 
   FutureOr<void> _showReplies(
       ShowRepliesEvent event, Emitter<CommentState> emit) {
+    emit(LoadingRepliesState());
     // TODO: Get mainComent event.commentID
     final mainComment = {};
     // TODO: Get replies event.commentID
@@ -68,6 +76,7 @@ class CommentBloc extends Bloc<CommentEvent, CommentState> {
       // Update userCommentData (add new ID)
       userCommentData['experienceComments'].add(newCommentID);
       // TODO: Get Comments
+      emit(LoadingCommentsState());
       final updatedComments = _getComments(event.experienceID);
       emit(RefreshCommentsState(comments: updatedComments));
     } catch (e) {
@@ -87,6 +96,7 @@ class CommentBloc extends Bloc<CommentEvent, CommentState> {
       // Update userCommentData (add new ID)
       userCommentData['experienceComments'].add(newReplyID);
       // TODO: Get Replies
+      emit(LoadingRepliesState());
       final updatedReplies = _getReplies(event.rootCommentID);
       emit(RefreshRepliesState(replies: updatedReplies));
     } catch (e) {
@@ -103,6 +113,7 @@ class CommentBloc extends Bloc<CommentEvent, CommentState> {
           .remove(event.commentID); // Check ..remove()
 
       // TODO: Get Comments
+      emit(LoadingCommentsState());
       final updatedComments = _getComments(event.experienceID);
       emit(RefreshCommentsState(comments: updatedComments));
     } catch (e) {
@@ -119,6 +130,7 @@ class CommentBloc extends Bloc<CommentEvent, CommentState> {
           .remove(event.commentID); // Check ..remove()
 
       // TODO: Get Replies
+      emit(LoadingRepliesState());
       final updatedReplies = _getComments(event.rootCommentID);
       emit(RefreshRepliesState(replies: updatedReplies));
     } catch (e) {
@@ -134,6 +146,7 @@ class CommentBloc extends Bloc<CommentEvent, CommentState> {
       //No need to update userCommentData
 
       // TODO: Get Comments
+      emit(LoadingCommentsState());
       final updatedComments = _getComments(event.experienceID);
       emit(RefreshCommentsState(comments: updatedComments));
     } catch (e) {
@@ -149,6 +162,7 @@ class CommentBloc extends Bloc<CommentEvent, CommentState> {
       //No need to update userCommentData
 
       // TODO: Get Replies
+      emit(LoadingRepliesState());
       final updatedReplies = _getReplies(event.rootCommentID);
       emit(RefreshRepliesState(replies: updatedReplies));
     } catch (e) {
@@ -172,11 +186,5 @@ class CommentBloc extends Bloc<CommentEvent, CommentState> {
   List _getReplies(rootCommentID) {
     // TODO: Get replies of rootComment from DB
     return [];
-  }
-
-  FutureOr<void> _getExperienceComments(
-      GetExperienceComments event, Emitter<CommentState> emit) {
-    final comments = _getComments(event.experienceID);
-    emit(RefreshCommentsState(comments: comments));
   }
 }

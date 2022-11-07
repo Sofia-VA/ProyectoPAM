@@ -42,7 +42,7 @@ class _CommentSectionState extends State<CommentSection> {
 
     var keyboardVisibilityController = KeyboardVisibilityController();
 
-    // Subscribe
+    // Subscribe when keyboard on focus
     keyboardSubscription =
         keyboardVisibilityController.onChange.listen((bool visible) {
       if (!visible) {
@@ -56,25 +56,25 @@ class _CommentSectionState extends State<CommentSection> {
   void dispose() {
     commentBoxFocusNode.dispose();
     replyBoxFocusNode.dispose();
-
     super.dispose();
   }
 
-  final comments = ['Wow', 'Thanks for sharing', 'Rad', 'Is this really free?'];
-  final replies = [
-    'Yes!',
-    'Awesome!',
-    'Lol I photobombed you',
-    'That was helpful',
-    'I agree',
-    'Hmmm you forgot to mention how you got there. Does anybody know how to? I\'m really lost',
-    'I have some other questions, can I DM you?',
-    'Wait, you can do that?'
-  ];
+  // final comments = ['Wow', 'Thanks for sharing', 'Rad', 'Is this really free?'];
+  // final replies = [
+  //   'Yes!',
+  //   'Awesome!',
+  //   'Lol I photobombed you',
+  //   'That was helpful',
+  //   'I agree',
+  //   'Hmmm you forgot to mention how you got there. Does anybody know how to? I\'m really lost',
+  //   'I have some other questions, can I DM you?',
+  //   'Wait, you can do that?'
+  // ];
 
   @override
   Widget build(BuildContext context) {
     var focusedComment = {};
+    var experienceComments = [];
 
     ///
     return BlocConsumer<CommentBloc, CommentState>(
@@ -82,8 +82,21 @@ class _CommentSectionState extends State<CommentSection> {
         if (state is CommentInitial) {
           BlocProvider.of<CommentBloc>(context)
               .add(GetExperienceComments(experienceID: null));
-        }
-        if (state is FocusCommentBoxState) {
+        } else if (state is GeneralErrorState) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('state.msg')),
+          );
+        } else if (state is LoadingCommentsState) {
+          // TODO: Implement loading animations
+        } else if (state is LoadingRepliesState) {
+          // TODO: Implement loading animations
+        } else if (state is RefreshCommentsState) {
+          experienceComments = state.comments;
+        } else if (state is RefreshRepliesState) {
+          experienceComments = state.replies;
+          _replyBoxVisibility = false;
+          _showReplies(context, focusedComment, state.replies);
+        } else if (state is FocusCommentBoxState) {
           focusedComment = state.mainComment;
           replyBoxFocusNode.requestFocus();
           _replyBoxVisibility = true;
@@ -104,14 +117,14 @@ class _CommentSectionState extends State<CommentSection> {
                       Divider(thickness: 2),
                       Align(
                           alignment: Alignment.centerLeft,
-                          child: Text("Comments (${comments.length})",
+                          child: Text("Comments (${experienceComments.length})",
                               style: Theme.of(context).textTheme.headline6)),
                       Divider(thickness: 2),
-                      _writeCommentBar(context, commentController,
-                          commentBoxFocusNode, '', commentType.comment),
+                      _writeBox(context, commentController, commentBoxFocusNode,
+                          '', commentType.comment),
                       SizedBox(key: widget.anchor, height: 5),
-                      _commentList(context, comments, null, widget.parentID,
-                          commentType.comment),
+                      _commentList(context, experienceComments, null,
+                          widget.parentID, commentType.comment),
                       //SizedBox(height: 50),
                     ],
                   )),
@@ -123,54 +136,8 @@ class _CommentSectionState extends State<CommentSection> {
     );
   }
 
-  Positioned _replyBox(BuildContext context, Map mainComment) {
-    return Positioned(
-      bottom: MediaQuery.of(context).viewInsets.bottom,
-      left: 0,
-      right: 0,
-      child: Visibility(
-        visible: _replyBoxVisibility,
-        child: Material(
-          elevation: 4,
-          child: Container(
-            padding: EdgeInsets.fromLTRB(0, 10, 0, 10),
-            child: Column(
-              children: [
-                ListTile(
-                  leading: GestureDetector(
-                    onTap: () {
-                      // TODO: Send to ProfilePage, arg: mainComment['userID']
-                    },
-                    child: CircleAvatar(
-                        radius: 18,
-                        child: Icon(Icons.person),
-                        backgroundColor:
-                            Theme.of(context).listTileTheme.iconColor),
-                  ),
-                  title: _writeCommentBar(
-                      context,
-                      replyController,
-                      replyBoxFocusNode,
-                      'Replying to ${mainComment['username']}',
-                      commentType.reply,
-                      mainComment['commentID']),
-                ),
-              ],
-            ),
-            decoration:
-                BoxDecoration(color: Theme.of(context).scaffoldBackgroundColor),
-          ),
-        ),
-      ),
-    );
-  }
-
-  Container _writeCommentBar(
-      BuildContext context,
-      TextEditingController controller,
-      FocusNode focusNode,
-      String labelText,
-      commentType type,
+  Container _writeBox(BuildContext context, TextEditingController controller,
+      FocusNode focusNode, String labelText, commentType type,
       [rootCommentID]) {
     return Container(
       height: MediaQuery.of(context).size.height * 0.1,
@@ -214,6 +181,7 @@ class _CommentSectionState extends State<CommentSection> {
                       rootCommentID: rootCommentID));
                 }
                 FocusManager.instance.primaryFocus?.unfocus();
+                controller.clear();
               }),
         ],
       ),
@@ -284,6 +252,48 @@ class _CommentSectionState extends State<CommentSection> {
                 context, replies, sc, widget.parentID, commentType.reply),
           ),
         ],
+      ),
+    );
+  }
+
+  Positioned _replyBox(BuildContext context, Map mainComment) {
+    return Positioned(
+      bottom: MediaQuery.of(context).viewInsets.bottom,
+      left: 0,
+      right: 0,
+      child: Visibility(
+        visible: _replyBoxVisibility,
+        child: Material(
+          elevation: 4,
+          child: Container(
+            padding: EdgeInsets.fromLTRB(0, 10, 0, 10),
+            child: Column(
+              children: [
+                ListTile(
+                  leading: GestureDetector(
+                    onTap: () {
+                      // TODO: Send to ProfilePage, arg: mainComment['userID']
+                    },
+                    child: CircleAvatar(
+                        radius: 18,
+                        child: Icon(Icons.person),
+                        backgroundColor:
+                            Theme.of(context).listTileTheme.iconColor),
+                  ),
+                  title: _writeBox(
+                      context,
+                      replyController,
+                      replyBoxFocusNode,
+                      'Replying to ${mainComment['username']}',
+                      commentType.reply,
+                      mainComment['commentID']),
+                ),
+              ],
+            ),
+            decoration:
+                BoxDecoration(color: Theme.of(context).scaffoldBackgroundColor),
+          ),
+        ),
       ),
     );
   }
