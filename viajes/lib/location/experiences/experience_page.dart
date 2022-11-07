@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_icon_shadow/flutter_icon_shadow.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:provider/provider.dart';
 
 import '../../custom_widgets/comments/comment_section.dart';
 import '../../custom_widgets/nav_bar.dart';
 import '../../custom_widgets/image_carousel_widget.dart';
+import 'experience_provider.dart';
 
 class ExperiencePage extends StatefulWidget {
   final Map experience;
@@ -51,10 +53,18 @@ class _ExperiencePageState extends State<ExperiencePage> {
           actions: [
             IconButton(
                 onPressed: () {
-                  // TODO: Like experience
+                  // TODO: Like experience | Test
+                  setState(() {
+                    Provider.of<ExperienceProvider>(context)
+                        .likeExperience(widget.experience['experienceID']);
+                  });
                 },
                 icon: IconShadow(
-                  Icon(Icons.favorite),
+                  Icon(Icons.favorite,
+                      color: Provider.of<ExperienceProvider>(context)
+                              .getLikedStatus(widget.experience['experienceID'])
+                          ? Theme.of(context).primaryColor
+                          : null),
                   shadowOffset: Offset.fromDirection(1, 2),
                   shadowColor: Color.fromARGB(114, 0, 0, 0),
                   shadowBlurSigma: 1,
