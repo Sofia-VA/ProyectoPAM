@@ -13,7 +13,13 @@ late StreamSubscription<bool> keyboardSubscription;
 
 class CommentSection extends StatefulWidget {
   final GlobalKey<State<StatefulWidget>>? anchor;
-  const CommentSection({super.key, this.anchor});
+  final parentID; // Experience ID / Place ID (low prio)
+
+  CommentSection({
+    super.key,
+    required this.parentID,
+    this.anchor,
+  });
 
   @override
   State<CommentSection> createState() => _CommentSectionState();
@@ -68,14 +74,22 @@ class _CommentSectionState extends State<CommentSection> {
 
   @override
   Widget build(BuildContext context) {
+    var focusedComment = {};
+
+    ///
     return BlocConsumer<CommentBloc, CommentState>(
       listener: (context, state) {
+        if (state is CommentInitial) {
+          BlocProvider.of<CommentBloc>(context)
+              .add(GetExperienceComments(experienceID: null));
+        }
         if (state is FocusCommentBoxState) {
+          focusedComment = state.mainComment;
           replyBoxFocusNode.requestFocus();
           _replyBoxVisibility = true;
         } else if (state is ShowRepliesRequestState) {
           _replyBoxVisibility = false;
-          _showReplies(context);
+          _showReplies(context, state.mainComment, state.replies);
         }
       },
       builder: (context, state) {
@@ -93,14 +107,15 @@ class _CommentSectionState extends State<CommentSection> {
                           child: Text("Comments (${comments.length})",
                               style: Theme.of(context).textTheme.headline6)),
                       Divider(thickness: 2),
-                      _writeCommentBar(
-                          context, commentController, commentBoxFocusNode, ''),
+                      _writeCommentBar(context, commentController,
+                          commentBoxFocusNode, '', commentType.comment),
                       SizedBox(key: widget.anchor, height: 5),
-                      _commentList(context, comments, null),
+                      _commentList(context, comments, null, widget.parentID,
+                          commentType.comment),
                       //SizedBox(height: 50),
                     ],
                   )),
-              _replyBox(context),
+              _replyBox(context, focusedComment),
             ],
           ),
         );
@@ -108,7 +123,7 @@ class _CommentSectionState extends State<CommentSection> {
     );
   }
 
-  Positioned _replyBox(BuildContext context) {
+  Positioned _replyBox(BuildContext context, Map mainComment) {
     return Positioned(
       bottom: MediaQuery.of(context).viewInsets.bottom,
       left: 0,
@@ -124,7 +139,7 @@ class _CommentSectionState extends State<CommentSection> {
                 ListTile(
                   leading: GestureDetector(
                     onTap: () {
-                      // TODO: Send to ProfilePage
+                      // TODO: Send to ProfilePage, arg: mainComment['userID']
                     },
                     child: CircleAvatar(
                         radius: 18,
@@ -132,8 +147,13 @@ class _CommentSectionState extends State<CommentSection> {
                         backgroundColor:
                             Theme.of(context).listTileTheme.iconColor),
                   ),
-                  title: _writeCommentBar(context, replyController,
-                      replyBoxFocusNode, 'Replying to'),
+                  title: _writeCommentBar(
+                      context,
+                      replyController,
+                      replyBoxFocusNode,
+                      'Replying to ${mainComment['username']}',
+                      commentType.reply,
+                      mainComment['commentID']),
                 ),
               ],
             ),
@@ -145,8 +165,13 @@ class _CommentSectionState extends State<CommentSection> {
     );
   }
 
-  Container _writeCommentBar(BuildContext context,
-      TextEditingController controller, FocusNode focusNode, String labelText) {
+  Container _writeCommentBar(
+      BuildContext context,
+      TextEditingController controller,
+      FocusNode focusNode,
+      String labelText,
+      commentType type,
+      [rootCommentID]) {
     return Container(
       height: MediaQuery.of(context).size.height * 0.1,
       child: Row(
@@ -178,7 +203,16 @@ class _CommentSectionState extends State<CommentSection> {
           IconButton(
               icon: FaIcon(FontAwesomeIcons.solidPaperPlane),
               onPressed: () {
-                // TODO: Post comment
+                // TODO: Post comment/reply
+                if (type == commentType.comment) {
+                  BlocProvider.of<CommentBloc>(context).add(PostCommentEvent(
+                      comment: controller.toString(),
+                      experienceID: widget.parentID));
+                } else if (type == commentType.reply && rootCommentID != null) {
+                  BlocProvider.of<CommentBloc>(context).add(PostReplyEvent(
+                      reply: controller.toString(),
+                      rootCommentID: rootCommentID));
+                }
                 FocusManager.instance.primaryFocus?.unfocus();
               }),
         ],
@@ -186,7 +220,8 @@ class _CommentSectionState extends State<CommentSection> {
     );
   }
 
-  Widget _commentList(BuildContext context, comments, ScrollController? sc) {
+  Widget _commentList(BuildContext context, comments, ScrollController? sc,
+      parentID, commentType type) {
     return ListView.builder(
       controller: sc,
       shrinkWrap: true,
@@ -195,12 +230,15 @@ class _CommentSectionState extends State<CommentSection> {
       scrollDirection: Axis.vertical,
       itemCount: comments.length,
       itemBuilder: (BuildContext context, int index) {
-        return CommentTile(comment: comments[index]);
+        return CommentTile(
+            comment: comments[index],
+            parentID: parentID,
+            type: type); // ExperienceID/RootCommentID
       },
     );
   }
 
-  _showReplies(BuildContext context) {
+  _showReplies(BuildContext context, Map mainComment, List replies) {
     showBarModalBottomSheet(
         backgroundColor: Colors.blue,
         elevation: 1,
@@ -215,18 +253,16 @@ class _CommentSectionState extends State<CommentSection> {
                 child: Stack(
                   clipBehavior: Clip.none,
                   children: [
-                    _repliesList(ModalScrollController.of(context)),
-                    _replyBox(context),
+                    _repliesList(ModalScrollController.of(context), mainComment,
+                        replies),
+                    _replyBox(context, mainComment),
                   ],
                 )),
           );
-
-          // (context) => _repliesList(
-          //     ModalScrollController.of(context)!, mainContext)
         });
   }
 
-  Widget _repliesList(ScrollController? sc) {
+  Widget _repliesList(ScrollController? sc, Map mainComment, List replies) {
     return SingleChildScrollView(
       child: Column(
         children: [
@@ -235,15 +271,17 @@ class _CommentSectionState extends State<CommentSection> {
                 left: MediaQuery.of(context).size.width * 0.02,
                 right: MediaQuery.of(context).size.width * 0.02),
             child: CommentTile(
-              comment: 'This is the main comment',
-            ),
+                comment: mainComment,
+                parentID: widget.parentID,
+                type: commentType.comment),
           ),
           Divider(thickness: 2),
           Container(
             padding: EdgeInsets.only(
                 left: MediaQuery.of(context).size.width * 0.1,
                 right: MediaQuery.of(context).size.width * 0.02),
-            child: _commentList(context, replies, sc),
+            child: _commentList(
+                context, replies, sc, widget.parentID, commentType.reply),
           ),
         ],
       ),

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:viajes/home/custom_icon_button.dart';
-import 'package:viajes/home/location_card.dart';
-import 'package:viajes/nav_bar.dart';
+import 'package:viajes/custom_widgets/custom_icon_button.dart';
+import 'package:viajes/custom_widgets/location_card.dart';
+import 'package:viajes/custom_widgets/nav_bar.dart';
 
 class HomePage extends StatefulWidget {
   HomePage({
