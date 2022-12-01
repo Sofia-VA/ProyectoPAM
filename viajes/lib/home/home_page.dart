@@ -1,4 +1,7 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:viajes/custom_widgets/custom_icon_button.dart';
@@ -16,6 +19,37 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   final searchController = TextEditingController();
+  FocusNode searchFocus = FocusNode();
+  late StreamSubscription<bool> keyboardSubscription;
+  bool isFocusShare = false;
+
+  @override
+  void initState() {
+    super.initState();
+    searchFocus.addListener(_onFocusChange);
+    var keyboardVisibilityController = KeyboardVisibilityController();
+
+    // Subscribe when keyboard on focus
+    keyboardSubscription =
+        keyboardVisibilityController.onChange.listen((bool visible) {
+      if (!visible) {
+        FocusScope.of(context).unfocus();
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    searchFocus.removeListener(_onFocusChange);
+    searchFocus.dispose();
+  }
+
+  void _onFocusChange() {
+    isFocusShare = searchFocus.hasFocus;
+
+    debugPrint("Focus: ${searchFocus.hasFocus.toString()}");
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -112,6 +146,7 @@ class _HomePageState extends State<HomePage> {
 
   Widget _searchBar(BuildContext context) {
     return TextField(
+      focusNode: searchFocus,
       enableSuggestions: true,
       controller: searchController,
       decoration: InputDecoration(
@@ -125,9 +160,16 @@ class _HomePageState extends State<HomePage> {
           ),
         ),
         prefixIcon: IconButton(
-            icon: Icon(Icons.search),
+            icon: isFocusShare ? Icon(Icons.close) : Icon(Icons.search),
             onPressed: () {
-              FocusManager.instance.primaryFocus?.unfocus();
+              print(isFocusShare);
+              if (isFocusShare) {
+                FocusScope.of(context).requestFocus(null);
+                searchController.clear();
+              }
+              searchFocus.requestFocus();
+              setState(() {});
+
               //TODO: Search
             }),
         suffixIcon: IconButton(
