@@ -117,19 +117,6 @@ class _HomePageState extends State<HomePage> {
                 child: BlocConsumer<HomeBloc, HomeState>(
                   listener: (context, state) {
                     print('State: ${state}');
-                    // if (keyboardChange) {
-                    //   if (!isKeyboardVisible) {
-                    //     FocusScope.of(context).unfocus();
-                    //     BlocProvider.of<HomeBloc>(context)
-                    //         .add(resetSearchEvent(prevState: prevState));
-                    //   } else {
-                    //     prevState = state;
-                    //     BlocProvider.of<HomeBloc>(context)
-                    //         .add(beginTypingEvent());
-                    //   }
-                    // }
-
-                    // TODO: implement listener
                   },
                   builder: (context, state) {
                     return KeyboardVisibilityBuilder(
@@ -140,7 +127,7 @@ class _HomePageState extends State<HomePage> {
                         if (!(prevState is isTypingState)) {
                           prevState = state;
                           BlocProvider.of<HomeBloc>(context)
-                              .add(beginTypingEvent());
+                              .add(BeginTypingEvent());
                         }
 
                         return Column(children: [
@@ -152,7 +139,11 @@ class _HomePageState extends State<HomePage> {
                         if (prevState != null && state is isTypingState) {
                           print('158');
                           BlocProvider.of<HomeBloc>(context)
-                              .add(resetSearchEvent(prevState: prevState));
+                              .add(ResetSearchEvent(prevState: prevState));
+                        }
+                        if (state is HomeInitial) {
+                          BlocProvider.of<HomeBloc>(context)
+                              .add(GetPlacesEvent());
                         }
                         if (state is ResultsState) {
                           return resultsView(context);
@@ -178,7 +169,7 @@ class _HomePageState extends State<HomePage> {
             icon: Icon(Icons.arrow_back_ios),
             onPressed: () {
               BlocProvider.of<HomeBloc>(context)
-                  .add(resetSearchEvent(prevState: null));
+                  .add(ResetSearchEvent(prevState: null));
             }),
         Expanded(child: Center(child: Text('Showing your search results')))
       ])
@@ -186,6 +177,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   Column defaultView(BuildContext context) {
+    List places = BlocProvider.of<HomeBloc>(context).getHomePlaces;
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -200,7 +192,7 @@ class _HomePageState extends State<HomePage> {
             child:
                 Text("Nearby", style: Theme.of(context).textTheme.headline6)),
         SizedBox(height: 20),
-        Container(height: 170, child: _nearbyPlaces()),
+        Container(height: 170, child: _nearbyPlaces(places)),
         Align(
             alignment: Alignment.centerLeft,
             child:
@@ -209,11 +201,13 @@ class _HomePageState extends State<HomePage> {
         SizedBox(
             height: 160,
             child: LocationCard(
-                width: 0.9,
-                onTapCard: () {
-                  // TODO: Send data to locationPage
-                  Navigator.pushNamed(context, '/LocationPage');
-                })),
+              width: 0.9,
+              onTapCard: () {
+                // TODO: Send data to locationPage
+                Navigator.pushNamed(context, '/LocationPage');
+              },
+              place: {},
+            )),
       ],
     );
   }
@@ -246,7 +240,7 @@ class _HomePageState extends State<HomePage> {
 
               //TODO: Search
               BlocProvider.of<HomeBloc>(context)
-                  .add(searchEvent(searchString: searchController.text));
+                  .add(SearchEvent(searchString: searchController.text));
             }),
         suffixIcon: IconButton(
             icon: Icon(Icons.tune),
@@ -257,7 +251,7 @@ class _HomePageState extends State<HomePage> {
       onSubmitted: (value) {
         // TODO: Search
         BlocProvider.of<HomeBloc>(context)
-            .add(searchEvent(searchString: searchController.text));
+            .add(SearchEvent(searchString: searchController.text));
       },
     );
   }
@@ -285,22 +279,24 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Widget _nearbyPlaces() {
+  Widget _nearbyPlaces(List places) {
     return ListView.builder(
         shrinkWrap: true,
         physics: ClampingScrollPhysics(),
         padding: EdgeInsets.only(left: 5, bottom: 10),
         scrollDirection: Axis.horizontal,
-        itemCount: 15,
+        itemCount: places.length,
         itemBuilder: (BuildContext context, int index) {
           return Container(
               margin: EdgeInsets.only(right: 10),
               child: LocationCard(
-                  width: 0.4,
-                  onTapCard: () {
-                    // TODO: Send data to LocationPage
-                    Navigator.pushNamed(context, '/LocationPage');
-                  }));
+                width: 0.4,
+                onTapCard: () {
+                  // TODO: Send data to LocationPage
+                  Navigator.pushNamed(context, '/LocationPage');
+                },
+                place: places[index],
+              ));
         });
   }
 }

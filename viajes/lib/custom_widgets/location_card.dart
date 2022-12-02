@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 
 class LocationCard extends StatelessWidget {
+  final Map<String, dynamic> place;
   final double width;
   final VoidCallback? onTapCard;
-  const LocationCard({super.key, required this.width, this.onTapCard});
+  const LocationCard(
+      {super.key, required this.width, this.onTapCard, required this.place});
 
   @override
   Widget build(BuildContext context) {
@@ -23,7 +25,7 @@ class LocationCard extends StatelessWidget {
                   child: Column(mainAxisSize: MainAxisSize.max, children: [
                     Stack(children: <Widget>[
                       Ink.image(
-                          image:
+                          image: place['image'] ??
                               AssetImage("assets/images/mountain_sunset.jpg"),
                           height: 90,
                           width: MediaQuery.of(context).size.width * width,
@@ -34,9 +36,10 @@ class LocationCard extends StatelessWidget {
                       padding: EdgeInsets.only(left: 3, right: 3),
                       child: Column(
                         children: [
-                          Text("Place Name", overflow: TextOverflow.fade),
+                          Text(place['name'] ?? "Place Name",
+                              overflow: TextOverflow.fade),
                           SizedBox(height: 3),
-                          Text("10km away",
+                          Text("N km away",
                               overflow: TextOverflow.fade,
                               style: Theme.of(context).textTheme.bodySmall)
                         ],

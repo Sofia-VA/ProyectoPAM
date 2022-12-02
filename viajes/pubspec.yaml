@@ -37,9 +37,7 @@ dependencies:
   # draggable_home: ^1.0.2
   
   waterfall_flow: ^3.0.2
-  
   modal_bottom_sheet: ^2.1.2
-
   swipe_image_gallery: ^0.8.0
   carousel_slider: ^4.1.1
 
@@ -51,11 +49,36 @@ dependencies:
 
   # Bloc + Provider
   flutter_bloc: ^8.1.1
+  bloc: ^8.1.0
   equatable: ^2.0.5
-  provider: ^6.0.4
+  provider:
 
   # Utils
   timeago: ^3.3.0
+  # file_picker: ^5.2.3
+
+  feature_discovery: ^0.14.1
+  colours: ^0.0.2
+  syncfusion_flutter_calendar:
+  intl:
+  
+  # Google Maps
+  # google_maps_flutter: ^2.2.1
+  # dio: ^4.0.6
+  # geolocator: ^9.0.2
+  # geocoding: ^2.0.5
+  # google_maps_webservice: ^0.0.19
+
+  # API_KEY
+  flutter_config: ^2.0.0
+  flutter_dotenv: ^5.0.2
+
+  # Firebase
+  firebase_storage:
+  cloud_firestore:
+  firebase_auth:
+  google_sign_in: ^5.4.2
+  firebase_core: ^2.3.0
 
 dev_dependencies:
   flutter_test:
@@ -85,6 +108,7 @@ flutter:
     - assets/images/mountain_night.gif
     - assets/images/lake_morning.png
     - assets/images/travel_banner.jpg
+    - .env
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see

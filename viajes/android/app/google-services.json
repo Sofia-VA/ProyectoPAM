@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "577953048519",
+    "project_id": "travelerapp-96f0e",
+    "storage_bucket": "travelerapp-96f0e.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:577953048519:android:0505ae317ec61c1da0dbe2",
+        "android_client_info": {
+          "package_name": "com.example.viajes"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "577953048519-pl8mrdr97us9i5t2r0h0afd1hqldpv0k.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.viajes",
+            "certificate_hash": "13ccc50d5b8ac74e760638383b27d55d6217842a"
+          }
+        },
+        {
+          "client_id": "577953048519-u13ujfd8u1jsma89mrvso7kensuvr9f2.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDgfT6wBmCRD8NfXWbGfEfihrF_Llh_o2Q"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "577953048519-u13ujfd8u1jsma89mrvso7kensuvr9f2.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

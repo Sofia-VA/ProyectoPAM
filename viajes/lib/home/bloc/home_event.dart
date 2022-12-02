@@ -8,16 +8,18 @@ abstract class HomeEvent extends Equatable {
   List<Object> get props => [];
 }
 
-class beginTypingEvent extends HomeEvent {}
+class BeginTypingEvent extends HomeEvent {}
 
-class searchEvent extends HomeEvent {
+class SearchEvent extends HomeEvent {
   final searchString;
 
-  searchEvent({required this.searchString});
+  SearchEvent({required this.searchString});
 }
 
-class resetSearchEvent extends HomeEvent {
+class ResetSearchEvent extends HomeEvent {
   final prevState;
 
-  resetSearchEvent({required this.prevState});
+  ResetSearchEvent({required this.prevState});
 }
+
+class GetPlacesEvent extends HomeEvent {}
