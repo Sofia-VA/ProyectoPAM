@@ -1,12 +1,15 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:viajes/custom_widgets/custom_icon_button.dart';
 import 'package:viajes/custom_widgets/location_card.dart';
 import 'package:viajes/custom_widgets/nav_bar.dart';
+
+import 'bloc/home_bloc.dart';
 
 class HomePage extends StatefulWidget {
   HomePage({
@@ -19,17 +22,19 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   final searchController = TextEditingController();
+
   FocusNode searchFocus = FocusNode();
   late StreamSubscription<bool> keyboardSubscription;
-  bool isFocusShare = false;
+  bool isFocusSearch = false;
+  var prevState = null;
 
   @override
   void initState() {
     super.initState();
     searchFocus.addListener(_onFocusChange);
-    var keyboardVisibilityController = KeyboardVisibilityController();
 
     // Subscribe when keyboard on focus
+    var keyboardVisibilityController = KeyboardVisibilityController();
     keyboardSubscription =
         keyboardVisibilityController.onChange.listen((bool visible) {
       if (!visible) {
@@ -46,7 +51,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   void _onFocusChange() {
-    isFocusShare = searchFocus.hasFocus;
+    isFocusSearch = searchFocus.hasFocus;
 
     debugPrint("Focus: ${searchFocus.hasFocus.toString()}");
   }
@@ -108,40 +113,109 @@ class _HomePageState extends State<HomePage> {
             SliverList(
                 delegate: SliverChildListDelegate([
               Container(
-                  padding: EdgeInsets.all(20),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Align(
-                          alignment: Alignment.centerLeft,
-                          child: Text("Categories",
-                              style: Theme.of(context).textTheme.headline6)),
-                      SizedBox(height: 20),
-                      Container(height: 65, child: _categoriesIcons()),
-                      Align(
-                          alignment: Alignment.centerLeft,
-                          child: Text("Nearby",
-                              style: Theme.of(context).textTheme.headline6)),
-                      SizedBox(height: 20),
-                      Container(height: 170, child: _nearbyPlaces()),
-                      Align(
-                          alignment: Alignment.centerLeft,
-                          child: Text("Popular",
-                              style: Theme.of(context).textTheme.headline6)),
-                      SizedBox(height: 20),
-                      SizedBox(
-                          height: 160,
-                          child: LocationCard(
-                              width: 0.9,
-                              onTapCard: () {
-                                // TODO: Send data to locationPage
-                                Navigator.pushNamed(context, '/LocationPage');
-                              })),
-                    ],
-                  )),
+                padding: EdgeInsets.all(20),
+                child: BlocConsumer<HomeBloc, HomeState>(
+                  listener: (context, state) {
+                    print('State: ${state}');
+                    // if (keyboardChange) {
+                    //   if (!isKeyboardVisible) {
+                    //     FocusScope.of(context).unfocus();
+                    //     BlocProvider.of<HomeBloc>(context)
+                    //         .add(resetSearchEvent(prevState: prevState));
+                    //   } else {
+                    //     prevState = state;
+                    //     BlocProvider.of<HomeBloc>(context)
+                    //         .add(beginTypingEvent());
+                    //   }
+                    // }
+
+                    // TODO: implement listener
+                  },
+                  builder: (context, state) {
+                    return KeyboardVisibilityBuilder(
+                        builder: (context, isKeyboardVisible) {
+                      if (isKeyboardVisible) {
+                        print('prevstate + ${prevState}');
+                        print('state + ${state}');
+                        if (!(prevState is isTypingState)) {
+                          prevState = state;
+                          BlocProvider.of<HomeBloc>(context)
+                              .add(beginTypingEvent());
+                        }
+
+                        return Column(children: [
+                          Center(
+                            child: Text('Searching...'),
+                          ),
+                        ]);
+                      } else {
+                        if (prevState != null && state is isTypingState) {
+                          print('158');
+                          BlocProvider.of<HomeBloc>(context)
+                              .add(resetSearchEvent(prevState: prevState));
+                        }
+                        if (state is ResultsState) {
+                          return resultsView(context);
+                        } else if (state is isTypingState) {
+                          return Center();
+                        } else {
+                          return defaultView(context);
+                        }
+                      }
+                    });
+                  },
+                ),
+              )
             ]))
           ]),
         ));
+  }
+
+  Column resultsView(BuildContext context) {
+    return Column(children: [
+      Row(children: [
+        IconButton(
+            icon: Icon(Icons.arrow_back_ios),
+            onPressed: () {
+              BlocProvider.of<HomeBloc>(context)
+                  .add(resetSearchEvent(prevState: null));
+            }),
+        Expanded(child: Center(child: Text('Showing your search results')))
+      ])
+    ]);
+  }
+
+  Column defaultView(BuildContext context) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Align(
+            alignment: Alignment.centerLeft,
+            child: Text("Categories",
+                style: Theme.of(context).textTheme.headline6)),
+        SizedBox(height: 20),
+        Container(height: 65, child: _categoriesIcons()),
+        Align(
+            alignment: Alignment.centerLeft,
+            child:
+                Text("Nearby", style: Theme.of(context).textTheme.headline6)),
+        SizedBox(height: 20),
+        Container(height: 170, child: _nearbyPlaces()),
+        Align(
+            alignment: Alignment.centerLeft,
+            child:
+                Text("Popular", style: Theme.of(context).textTheme.headline6)),
+        SizedBox(height: 20),
+        SizedBox(
+            height: 160,
+            child: LocationCard(
+                width: 0.9,
+                onTapCard: () {
+                  // TODO: Send data to locationPage
+                  Navigator.pushNamed(context, '/LocationPage');
+                })),
+      ],
+    );
   }
 
   Widget _searchBar(BuildContext context) {
@@ -160,10 +234,10 @@ class _HomePageState extends State<HomePage> {
           ),
         ),
         prefixIcon: IconButton(
-            icon: isFocusShare ? Icon(Icons.close) : Icon(Icons.search),
+            icon: isFocusSearch ? Icon(Icons.close) : Icon(Icons.search),
             onPressed: () {
-              print(isFocusShare);
-              if (isFocusShare) {
+              print(isFocusSearch);
+              if (isFocusSearch) {
                 FocusScope.of(context).requestFocus(null);
                 searchController.clear();
               }
@@ -171,6 +245,8 @@ class _HomePageState extends State<HomePage> {
               setState(() {});
 
               //TODO: Search
+              BlocProvider.of<HomeBloc>(context)
+                  .add(searchEvent(searchString: searchController.text));
             }),
         suffixIcon: IconButton(
             icon: Icon(Icons.tune),
@@ -180,6 +256,8 @@ class _HomePageState extends State<HomePage> {
       ),
       onSubmitted: (value) {
         // TODO: Search
+        BlocProvider.of<HomeBloc>(context)
+            .add(searchEvent(searchString: searchController.text));
       },
     );
   }

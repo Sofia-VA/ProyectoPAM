@@ -52,7 +52,9 @@ class _LocationDetailsState extends State<LocationDetails> {
                 SizedBox(height: 20),
                 _generalInfoIcons(),
                 SizedBox(height: 20),
-                _activitiesIcons(widget.location['activities']),
+                widget.location['activities'] != null
+                    ? _activitiesIcons(widget.location['activities'])
+                    : Text('No activities found'),
                 SizedBox(height: 20),
                 _placeTags(context, widget.location['tags']),
               ],
@@ -115,7 +117,7 @@ class _LocationDetailsState extends State<LocationDetails> {
             //color: Theme.of(context).primaryColor,
             borderRadius: BorderRadius.all(Radius.circular(10))),
         child: ReadMoreText(
-          widget.location['description'],
+          widget.location['description'] ?? 'There is no description',
           //"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec egestas ligula eget neque feugiat, non varius ipsum posuere. Cras lacinia luctus diam, nec sodales tellus aliquet non. Etiam tincidunt ex a est tincidunt sollicitudin. Pellentesque eget turpis nisl. Proin mollis vehicula placerat. Pellentesque aliquet scelerisque pulvinar. Maecenas et ex cursus, placerat eros a, viverra tellus. Etiam sodales porttitor efficitur. Suspendisse pellentesque dolor dictum lacus laoreet, a malesuada neque rutrum. Pellentesque nunc eros, viverra quis erat ac, vestibulum aliquam turpis. Aliquam tempor ultrices justo ac malesuada.",
           trimLines: 4,
           trimMode: TrimMode.Line,
