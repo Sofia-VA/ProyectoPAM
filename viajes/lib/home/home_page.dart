@@ -42,6 +42,9 @@ class _HomePageState extends State<HomePage> {
         FocusScope.of(context).unfocus();
         BlocProvider.of<HomeBloc>(context)
             .add(ResetSearchEvent(prevState: prevState));
+      } else {
+        searchFocus.requestFocus();
+        BlocProvider.of<HomeBloc>(context).add(BeginTypingEvent());
       }
     });
   }
@@ -78,16 +81,6 @@ class _HomePageState extends State<HomePage> {
                   ],
                   flexibleSpace: FlexibleSpaceBar(
                       background: Container(
-                          // decoration: BoxDecoration(
-                          //     image: DecorationImage(
-                          //         image: AssetImage(
-                          //             'assets/images/travel_banner.jpg'),
-                          //         fit: BoxFit.cover,
-                          //         alignment: Alignment(0, 11),
-                          //         colorFilter: ColorFilter.mode(
-                          //             Color.fromARGB(255, 42, 37, 37)
-                          //                 .withOpacity(0.3),
-                          //             BlendMode.srcOver))),
                           child: Center(
                               child: Text("Find a new experience",
                                   style: TextStyle(
@@ -123,14 +116,17 @@ class _HomePageState extends State<HomePage> {
                     print('State: ${state}');
                     if (!(state is isTypingState)) prevState = state;
                     if (state is HomeInitial) {
-                      print(
-                          'OMGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGg');
                       BlocProvider.of<HomeBloc>(context).add(GetPlacesEvent());
                     }
                   },
                   builder: (context, state) {
                     if (state is LoadingState) {
-                      return CircularProgressIndicator();
+                      return Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Flexible(child: CircularProgressIndicator()),
+                        ],
+                      );
                     } else if (state is ResultsState) {
                       return resultsView(context);
                     } else if (state is isTypingState) {
@@ -142,7 +138,7 @@ class _HomePageState extends State<HomePage> {
                     } else {
                       List places =
                           BlocProvider.of<HomeBloc>(context).getHomePlaces;
-                      print(places);
+
                       return defaultView(context, places);
                     }
                   },
@@ -225,12 +221,11 @@ class _HomePageState extends State<HomePage> {
         prefixIcon: IconButton(
             icon: isFocusSearch ? Icon(Icons.close) : Icon(Icons.search),
             onPressed: () {
-              print(isFocusSearch);
               if (isFocusSearch) {
                 FocusScope.of(context).requestFocus(null);
                 searchController.clear();
               }
-              searchFocus.requestFocus();
+
               setState(() {});
 
               //TODO: Search
@@ -287,7 +282,6 @@ class _HomePageState extends State<HomePage> {
               child: LocationCard(
                 width: 0.4,
                 onTapCard: () {
-                  // TODO: Send data to LocationPage
                   Navigator.of(context).push(MaterialPageRoute(
                       builder: (context) =>
                           LocationPage(locationID: places[index]['id'])));

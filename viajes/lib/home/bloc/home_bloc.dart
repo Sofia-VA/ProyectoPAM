@@ -71,19 +71,16 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   }
 }
 
-FutureOr<void> _search(SearchEvent event, Emitter<HomeState> emit) {
+FutureOr<void> _search(SearchEvent event, Emitter<HomeState> emit) async {
   emit(SearchingState());
   print(event.searchString);
   if (!event.searchString.isNotEmpty) return null;
   try {
-    //_searchResults = _getPlacesQuery(event.searchString);
+    List _searchResults = await _getPlacesQuery(event.searchString);
+    emit(ResultsState(places: _searchResults));
   } catch (e) {
     emit(Failure(errorMsg: '${e}'));
   }
-
-  emit(ResultsState(places: []
-      //_searchResults
-      ));
 }
 
 _getPlacesQuery(String filter) async {
@@ -98,10 +95,6 @@ _getPlacesQuery(String filter) async {
         .get();
   } else {
     docsRef = await queryPlaces.get();
-  }
-
-  for (var snapshot in docsRef.docs) {
-    var documentID = snapshot.id; // <-- Document ID
   }
 
   final places = docsRef.docs.map((doc) {
