@@ -3,6 +3,8 @@ import 'package:waterfall_flow/waterfall_flow.dart';
 
 import 'package:flutter/material.dart';
 
+import 'experience_page.dart';
+
 class LocationExperiences extends StatelessWidget {
   List experiences;
 
@@ -10,7 +12,7 @@ class LocationExperiences extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // final List experiences = [
+    // final List experiences = [ +ID
     //   {
     //     'title': 'The worst trip in my life',
     //     'author': 'AuthorUserName',
@@ -79,7 +81,12 @@ class LocationExperiences extends StatelessWidget {
                         GestureDetector(
                           onTap: () {
                             // TODO: Send Data to Experience page
-                            Navigator.pushNamed(context, '/ExperiencePage');
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => ExperiencePage(
+                                      experienceID: experiences[index]['id']),
+                                ));
                           },
                           child: Card(
                             semanticContainer: true,

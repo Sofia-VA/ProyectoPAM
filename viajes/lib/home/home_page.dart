@@ -8,7 +8,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:viajes/custom_widgets/custom_icon_button.dart';
 import 'package:viajes/custom_widgets/location_card.dart';
 import 'package:viajes/custom_widgets/nav_bar.dart';
-
+import 'package:viajes/location/location_page.dart';
 import 'bloc/home_bloc.dart';
 
 class HomePage extends StatefulWidget {
@@ -32,6 +32,7 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
     searchFocus.addListener(_onFocusChange);
+    BlocProvider.of<HomeBloc>(context).add(GetPlacesEvent());
 
     // Subscribe when keyboard on focus
     var keyboardVisibilityController = KeyboardVisibilityController();
@@ -39,6 +40,8 @@ class _HomePageState extends State<HomePage> {
         keyboardVisibilityController.onChange.listen((bool visible) {
       if (!visible) {
         FocusScope.of(context).unfocus();
+        BlocProvider.of<HomeBloc>(context)
+            .add(ResetSearchEvent(prevState: prevState));
       }
     });
   }
@@ -116,44 +119,32 @@ class _HomePageState extends State<HomePage> {
                 padding: EdgeInsets.all(20),
                 child: BlocConsumer<HomeBloc, HomeState>(
                   listener: (context, state) {
+                    print('--------------------------------');
                     print('State: ${state}');
+                    if (!(state is isTypingState)) prevState = state;
+                    if (state is HomeInitial) {
+                      print(
+                          'OMGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGg');
+                      BlocProvider.of<HomeBloc>(context).add(GetPlacesEvent());
+                    }
                   },
                   builder: (context, state) {
-                    return KeyboardVisibilityBuilder(
-                        builder: (context, isKeyboardVisible) {
-                      if (isKeyboardVisible) {
-                        print('prevstate + ${prevState}');
-                        print('state + ${state}');
-                        if (!(prevState is isTypingState)) {
-                          prevState = state;
-                          BlocProvider.of<HomeBloc>(context)
-                              .add(BeginTypingEvent());
-                        }
-
-                        return Column(children: [
-                          Center(
-                            child: Text('Searching...'),
-                          ),
-                        ]);
-                      } else {
-                        if (prevState != null && state is isTypingState) {
-                          print('158');
-                          BlocProvider.of<HomeBloc>(context)
-                              .add(ResetSearchEvent(prevState: prevState));
-                        }
-                        if (state is HomeInitial) {
-                          BlocProvider.of<HomeBloc>(context)
-                              .add(GetPlacesEvent());
-                        }
-                        if (state is ResultsState) {
-                          return resultsView(context);
-                        } else if (state is isTypingState) {
-                          return Center();
-                        } else {
-                          return defaultView(context);
-                        }
-                      }
-                    });
+                    if (state is LoadingState) {
+                      return CircularProgressIndicator();
+                    } else if (state is ResultsState) {
+                      return resultsView(context);
+                    } else if (state is isTypingState) {
+                      return Column(children: [
+                        Center(
+                          child: Text('Searching...'),
+                        ),
+                      ]);
+                    } else {
+                      List places =
+                          BlocProvider.of<HomeBloc>(context).getHomePlaces;
+                      print(places);
+                      return defaultView(context, places);
+                    }
                   },
                 ),
               )
@@ -176,8 +167,7 @@ class _HomePageState extends State<HomePage> {
     ]);
   }
 
-  Column defaultView(BuildContext context) {
-    List places = BlocProvider.of<HomeBloc>(context).getHomePlaces;
+  Column defaultView(BuildContext context, places) {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -204,7 +194,12 @@ class _HomePageState extends State<HomePage> {
               width: 0.9,
               onTapCard: () {
                 // TODO: Send data to locationPage
-                Navigator.pushNamed(context, '/LocationPage');
+                //Navigator.pushNamed(context, '/LocationPage');
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) =>
+                            LocationPage(locationID: places[0]['id'])));
               },
               place: {},
             )),
@@ -293,7 +288,9 @@ class _HomePageState extends State<HomePage> {
                 width: 0.4,
                 onTapCard: () {
                   // TODO: Send data to LocationPage
-                  Navigator.pushNamed(context, '/LocationPage');
+                  Navigator.of(context).push(MaterialPageRoute(
+                      builder: (context) =>
+                          LocationPage(locationID: places[index]['id'])));
                 },
                 place: places[index],
               ));

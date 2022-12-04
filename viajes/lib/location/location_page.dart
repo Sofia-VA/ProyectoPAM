@@ -8,9 +8,9 @@ import 'details_tab.dart';
 import 'experiences/experiences_tab.dart';
 
 class LocationPage extends StatefulWidget {
-  final locationID;
+  final String locationID;
 
-  const LocationPage({super.key, required this.locationID});
+  LocationPage({super.key, required this.locationID});
 
   @override
   _LocationPageState createState() => _LocationPageState();
@@ -28,6 +28,10 @@ class _LocationPageState extends State<LocationPage>
       vsync: this,
     );
     super.initState();
+    BlocProvider.of<LocationBloc>(context)
+        .add(RefreshLocationDetailsEvent(locationID: widget.locationID));
+    BlocProvider.of<LocationBloc>(context)
+        .add(RefreshLocationExperiencesEvent(locationID: widget.locationID));
   }
 
   @override
@@ -57,30 +61,21 @@ class _LocationPageState extends State<LocationPage>
 
     return BlocConsumer<LocationBloc, LocationState>(
       listener: (context, state) {
+        print('State is ${state}');
         //Controller listener
         _tabController.addListener(() {
           print('my index is' + _tabController.index.toString());
-          if (_tabController.index == 2 && experiences.isEmpty) {
-            // TODO: Implementation question -> Fetch experiences on change? or pre-change?
-            // BlocProvider.of<LocationBloc>(context)
-            //       .add(RefreshLocationDetailsEvent(locationID: widget.locationID));
+          print(experiences);
+          if (_tabController.index == 1 && experiences.isEmpty) {
+            BlocProvider.of<LocationBloc>(context).add(
+                RefreshLocationExperiencesEvent(locationID: widget.locationID));
           }
         });
         if (state is LocationInitial) {
-          BlocProvider.of<LocationBloc>(context)
-              .add(RefreshLocationDetailsEvent(locationID: widget.locationID));
-          BlocProvider.of<LocationBloc>(context)
-              .add(CheckFavoriteEvent(locationID: widget.locationID));
-          BlocProvider.of<LocationBloc>(context).add(
-              RefreshLocationExperiencesEvent(locationID: widget.locationID));
         } else if (state is GeneralErrorState) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text('state.msg')),
           );
-        } else if (state is LoadingDetailsState) {
-          // TODO: Implement loading animations
-        } else if (state is LoadingExperiencesState) {
-          // TODO: Implement loading animations
         } else if (state is RefreshDetailsState) {
           location = state.location;
         } else if (state is RefreshExperiencesState) {
@@ -90,63 +85,82 @@ class _LocationPageState extends State<LocationPage>
         }
       },
       builder: (context, state) {
-        return Scaffold(
-          drawer: NavBar(),
-          body: NestedScrollView(
-            floatHeaderSlivers: true,
-            headerSliverBuilder:
-                (BuildContext context, bool innerBoxIsScrolled) {
-              return <Widget>[
-                SliverAppBar(
-                    expandedHeight: expandedHeight,
-                    floating: false,
-                    pinned: true,
-                    snap: false,
-                    stretch: true,
-                    centerTitle: true,
-                    // TODO: Fading title
-                    title: innerBoxIsScrolled
-                        ? Text("${location['name']}")
-                        : Text(""),
-                    flexibleSpace: FlexibleSpaceBar(
-                      background: flexibleSpaceWidgetv2(context, expandedHeight,
-                          location, isFavorite), //flexibleSpaceWidget(context),
+        if (state is LocationInitial) {
+          print(state);
+          return Scaffold(body: loadingView());
+        } else {
+          if (location.isEmpty) {
+            BlocProvider.of<LocationBloc>(context).add(
+                RefreshLocationDetailsEvent(locationID: widget.locationID));
+            BlocProvider.of<LocationBloc>(context).add(
+                RefreshLocationExperiencesEvent(locationID: widget.locationID));
+            return Scaffold(body: loadingView());
+          }
+          return Scaffold(
+            drawer: NavBar(),
+            body: NestedScrollView(
+              floatHeaderSlivers: true,
+              headerSliverBuilder:
+                  (BuildContext context, bool innerBoxIsScrolled) {
+                return <Widget>[
+                  SliverAppBar(
+                      expandedHeight: expandedHeight,
+                      floating: false,
+                      pinned: true,
+                      snap: false,
+                      stretch: true,
+                      centerTitle: true,
+                      // TODO: Fading title
+                      title: innerBoxIsScrolled
+                          ? Text("${location['name'] ?? 'Place Name'}")
+                          : Text(""),
+                      flexibleSpace: FlexibleSpaceBar(
+                        background: flexibleSpaceWidgetv2(
+                            context,
+                            expandedHeight,
+                            location,
+                            isFavorite), //flexibleSpaceWidget(context),
 
-                      stretchModes: [
-                        StretchMode.blurBackground,
-                        StretchMode.zoomBackground
-                      ],
-                    ),
-                    leading: IconButton(
-                        icon: Icon(Icons.arrow_back_ios),
-                        onPressed: () {
-                          Navigator.pop(context);
-                        }),
-                    actions: [
-                      IconButton(
+                        stretchModes: [
+                          StretchMode.blurBackground,
+                          StretchMode.zoomBackground
+                        ],
+                      ),
+                      leading: IconButton(
+                          icon: Icon(Icons.arrow_back_ios),
                           onPressed: () {
-                            // TODO: Navigate Write Experience Page
-                          },
-                          icon: FaIcon(FontAwesomeIcons.featherPointed)),
+                            Navigator.pop(context);
+                          }),
+                      actions: [
+                        IconButton(
+                            onPressed: () {
+                              // TODO: Navigate Write Experience Page
+                            },
+                            icon: FaIcon(FontAwesomeIcons.featherPointed)),
+                      ],
+                      bottom: _tabBar),
+                ];
+              },
+              body: Column(children: [
+                Expanded(
+                  child: TabBarView(
+                    controller: _tabController,
+                    children: [
+                      (state is LoadingDetailsState)
+                          ? loadingView()
+                          : LocationDetails(location: location),
+                      (state is LoadingExperiencesState)
+                          ? loadingView()
+                          : LocationExperiences(experiences: experiences),
+                      //TODO: Rethink Q&A widget
+                      //Text("Q&A Tab"),
                     ],
-                    bottom: _tabBar),
-              ];
-            },
-            body: Column(children: [
-              Expanded(
-                child: TabBarView(
-                  controller: _tabController,
-                  children: [
-                    LocationDetails(location: location),
-                    LocationExperiences(experiences: experiences),
-                    //TODO: Rethink Q&A widget
-                    //Text("Q&A Tab"),
-                  ],
+                  ),
                 ),
-              ),
-            ]),
-          ),
-        );
+              ]),
+            ),
+          );
+        }
       },
     );
   }
@@ -158,9 +172,9 @@ class _LocationPageState extends State<LocationPage>
         width: double.infinity,
         decoration: BoxDecoration(
             image: DecorationImage(
-                image: (location['mainImage'] != null &&
-                        !location['mainImage'].isEmpty)
-                    ? NetworkImage('${location['mainImage']}')
+                image: (location['picture'] != null &&
+                        !location['picture'].isEmpty)
+                    ? NetworkImage('${location['picture']}')
                     : AssetImage('assets/images/mountain_sunset.jpg')
                         as ImageProvider,
                 fit: BoxFit.cover,
@@ -222,5 +236,17 @@ class _LocationPageState extends State<LocationPage>
             ],
           ),
         ));
+  }
+
+  Widget loadingView() {
+    return Column(
+      children: [
+        Expanded(
+          child: Center(
+            child: Text('Loading'),
+          ),
+        ),
+      ],
+    );
   }
 }

@@ -27,47 +27,83 @@ class _ImageCarouselState extends State<ImageCarousel> {
       super.dispose();
     }
 
-    return Container(
-        child: CarouselSlider.builder(
-            itemCount: widget.galleryImages.length,
-            options: CarouselOptions(
-              autoPlay: true,
-              aspectRatio: 1.0,
-              height: MediaQuery.of(context).size.height * 0.3,
-              enlargeCenterPage: true,
-              viewportFraction: 0.7,
-            ),
-            itemBuilder:
-                (BuildContext context, int itemIndex, int pageViewIndex) {
-              return GestureDetector(
-                  onTap: () {
-                    SwipeImageGallery(
-                      context: context,
-                      children: widget.galleryImages
-                          .map<Widget>((img) => Image(image: AssetImage(img)))
-                          .toList(),
-                      initialIndex: itemIndex,
-                      onSwipe: (index) {
-                        overlayController.add(GalleryOverlay(
-                          title: '${index + 1}/${widget.galleryImages.length}',
-                        ));
-                      },
-                      overlayController: overlayController,
-                      initialOverlay: GalleryOverlay(
-                        title:
-                            '${itemIndex + 1}/${widget.galleryImages.length}',
-                      ),
-                    ).show();
+    if (widget.galleryImages.length == 0) {
+      return Center();
+    } else if (widget.galleryImages.length == 1) {
+      return Container(
+          height: MediaQuery.of(context).size.height * 0.3,
+          padding: EdgeInsets.all(10),
+          child: GestureDetector(
+              onTap: () {
+                SwipeImageGallery(
+                  context: context,
+                  children: widget.galleryImages
+                      .map<Widget>((img) => Image(image: NetworkImage(img)))
+                      .toList(),
+                  initialIndex: 1,
+                  onSwipe: (index) {
+                    overlayController.add(GalleryOverlay(
+                      title: '1/1',
+                    ));
                   },
-                  child: Container(
-                      height: MediaQuery.of(context).size.height * 0.4,
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(15),
-                          image: DecorationImage(
-                              image:
-                                  AssetImage(widget.galleryImages[itemIndex]),
-                              fit: BoxFit.cover))));
-            }));
+                  overlayController: overlayController,
+                  initialOverlay: GalleryOverlay(
+                    title: '1/1',
+                  ),
+                ).show();
+              },
+              child: Container(
+                  height: MediaQuery.of(context).size.height * 0.4,
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(15),
+                      image: DecorationImage(
+                          image: NetworkImage(widget.galleryImages[0]),
+                          fit: BoxFit.cover)))));
+    } else {
+      return Container(
+          child: CarouselSlider.builder(
+              itemCount: widget.galleryImages.length,
+              options: CarouselOptions(
+                autoPlay: true,
+                aspectRatio: 1.0,
+                height: MediaQuery.of(context).size.height * 0.3,
+                enlargeCenterPage: true,
+                viewportFraction: 0.7,
+              ),
+              itemBuilder:
+                  (BuildContext context, int itemIndex, int pageViewIndex) {
+                return GestureDetector(
+                    onTap: () {
+                      SwipeImageGallery(
+                        context: context,
+                        children: widget.galleryImages
+                            .map<Widget>(
+                                (img) => Image(image: NetworkImage(img)))
+                            .toList(),
+                        initialIndex: itemIndex,
+                        onSwipe: (index) {
+                          overlayController.add(GalleryOverlay(
+                            title:
+                                '${index + 1}/${widget.galleryImages.length}',
+                          ));
+                        },
+                        overlayController: overlayController,
+                        initialOverlay: GalleryOverlay(
+                          title:
+                              '${itemIndex + 1}/${widget.galleryImages.length}',
+                        ),
+                      ).show();
+                    },
+                    child: Container(
+                        height: MediaQuery.of(context).size.height * 0.4,
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(15),
+                            image: DecorationImage(
+                                image: NetworkImage(
+                                    widget.galleryImages[itemIndex]),
+                                fit: BoxFit.cover))));
+              }));
+    }
   }
 }
 

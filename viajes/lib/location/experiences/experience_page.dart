@@ -1,22 +1,25 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_icon_shadow/flutter_icon_shadow.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:provider/provider.dart';
 
 import '../../custom_widgets/comments/comment_section.dart';
 import '../../custom_widgets/nav_bar.dart';
 import '../../custom_widgets/image_carousel_widget.dart';
-import 'experience_provider.dart';
+import '../location_page.dart';
+import 'bloc/experience_bloc.dart';
 
 class ExperiencePage extends StatefulWidget {
-  final Map experience;
-  const ExperiencePage({super.key, required this.experience});
+  final String experienceID;
+
+  ExperiencePage({super.key, required this.experienceID});
 
   @override
-  State<ExperiencePage> createState() => _ExperiencePageState();
+  _ExperiencePageState createState() => _ExperiencePageState();
 }
 
-class _ExperiencePageState extends State<ExperiencePage> {
+class _ExperiencePageState extends State<ExperiencePage>
+    with SingleTickerProviderStateMixin {
   ScrollController scrollController = ScrollController();
 
   final commentSectionAnchor = GlobalKey();
@@ -27,16 +30,174 @@ class _ExperiencePageState extends State<ExperiencePage> {
     'assets/images/lake_morning.png',
   ];
 
-//   final text =
-//       '''Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam gravida tortor ante, a blandit libero lobortis ut. Mauris vehicula tortor ut ex ultricies sodales. Proin ultrices eleifend diam eget congue. Sed iaculis aliquet diam, ac tempus enim. Maecenas scelerisque sodales massa in lacinia. Proin porta mi diam, eu interdum nibh elementum a. Proin vestibulum libero justo, a tincidunt urna vehicula in. Nam vitae mauris diam. Nam in lacinia arcu, vitae consectetur lacus. Quisque et odio lacus. Suspendisse ligula elit, mattis sit amet venenatis placerat, luctus non enim.
+  @override
+  void initState() {
+    super.initState();
+    BlocProvider.of<ExperienceBloc>(context)
+        .add(RefreshExperienceEvent(experienceID: widget.experienceID));
+  }
 
-// Integer ac fermentum neque. Aenean ipsum metus, cursus sed nisl quis, fermentum sagittis elit. Aliquam pulvinar sapien vitae ligula auctor blandit. Fusce vel tristique lorem. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Quisque at nibh nunc. Interdum et malesuada fames ac ante ipsum primis in faucibus. Donec suscipit risus erat, dapibus pretium enim vestibulum in. Sed sed lorem non est pretium mollis non eget velit. Donec fermentum pretium lectus quis suscipit. Sed eu elit efficitur diam convallis tincidunt. Nullam consequat vehicula nisi, ut euismod lacus interdum vitae. Curabitur ornare felis et dui mollis rhoncus. Sed eu felis mi. Morbi eros lorem, consequat eget tincidunt eu, imperdiet a est.
-
-// Integer eget neque tortor. Morbi ligula leo, suscipit et ligula in, molestie dignissim est. Phasellus metus enim, condimentum at consequat vitae, ultrices sed tellus. Donec vel luctus ante, a pellentesque tortor. Donec ligula velit, consectetur in metus sit amet, sollicitudin ultricies nibh. Maecenas aliquam pharetra nisi. Curabitur feugiat vulputate finibus. Sed arcu eros, rhoncus vitae purus et, aliquet tincidunt mauris. Duis iaculis lacinia neque in tempus. Suspendisse gravida rhoncus nisl vel fermentum. Praesent eu nibh dolor.
-// ''';
+  @override
+  void dispose() {
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
+    bool isLiked = false;
+    var experience = {};
+
+    return BlocConsumer<ExperienceBloc, ExperienceState>(
+      listener: (context, state) {
+        print('State is ${state}');
+        if (state is ExperienceInitial) {
+          BlocProvider.of<ExperienceBloc>(context)
+              .add(RefreshExperienceEvent(experienceID: widget.experienceID));
+        } else if (state is GeneralErrorState) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('state.msg')),
+          );
+        } else if (state is RefreshExperienceState) {
+          experience = state.experience;
+          isLiked = state.isLiked;
+        } else if (state is SuccessLikingState) {
+          isLiked = true;
+        }
+      },
+      builder: (context, state) {
+        if (state is ExperienceInitial || state is LoadingExperienceState) {
+          return Scaffold(body: loadingView());
+        } else {
+          if (experience.isEmpty) {
+            BlocProvider.of<ExperienceBloc>(context)
+                .add(RefreshExperienceEvent(experienceID: widget.experienceID));
+            return Scaffold(body: loadingView());
+          }
+          return _defaultView(experience, isLiked);
+        }
+      },
+    );
+  }
+
+  Row _experienceTitle(BuildContext context, Map experience) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Flexible(
+            child: Text(experience['title'] ?? "Experience Post Title",
+                style: Theme.of(context).textTheme.headline5)),
+        Row(
+          children: [
+            Icon(Icons.star, size: 25, color: Colors.amberAccent),
+            SizedBox(width: 3),
+            Text('${experience['rating']}',
+                style: Theme.of(context).textTheme.bodyLarge),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget _postData(BuildContext context, Map experience) {
+    return Row(children: [
+      Container(
+        padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            Icon(Icons.date_range, size: 25),
+            SizedBox(width: 3),
+            Text('${experience['formatDate']}'),
+          ],
+        ),
+      ),
+      Flexible(
+        child: ListTile(
+            title: Text("by ${experience['authorInfo']?['name'] ?? 'Username'}",
+                textAlign: TextAlign.end),
+            trailing: CircleAvatar(
+                radius: 18,
+                child: experience['authorInfo']?['profilePicture'] != null &&
+                        experience['authorInfo']?['profilePicture'] != ''
+                    ? ClipOval(
+                        child: Image.network(
+                            experience['authorInfo']?['profilePicture']))
+                    : Icon(Icons.person),
+                backgroundColor: Theme.of(context).listTileTheme.iconColor),
+            onTap: () {
+              // TODO: Send to ProfilePage
+              // Navigator.pop(context);
+            }),
+      ),
+    ]);
+  }
+
+  Row _postHeader(BuildContext context, commentSectionAnchor, Map experience) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      children: [
+        Flexible(
+          child: ListTile(
+            leading: IconButton(
+                onPressed: () {
+                  BlocProvider.of<ExperienceBloc>(context)
+                      .add(ResetStateEvent());
+                  Navigator.of(context).push(MaterialPageRoute(
+                      builder: (context) =>
+                          LocationPage(locationID: experience['locationID'])));
+                },
+                icon: FaIcon(FontAwesomeIcons.locationDot, size: 25)),
+            title: Transform.translate(
+              offset: Offset(-16, 0),
+              child: Text(experience['placeInfo']['placeName'] ?? "Place Name",
+                  style: Theme.of(context).textTheme.labelLarge),
+            ),
+            subtitle: Transform.translate(
+              offset: Offset(-16, 0),
+              child: Text(
+                "${experience['placeInfo']['placeCity'] ?? 'City'}, ${experience['placeInfo']['placeCountry'] ?? 'Country'}",
+                style: Theme.of(context).textTheme.bodyMedium,
+              ),
+            ),
+          ),
+        ),
+        Row(
+          children: [
+            Icon(Icons.monetization_on, size: 25),
+            SizedBox(width: 3),
+            Text('${experience['price']}',
+                style: Theme.of(context).textTheme.bodyLarge),
+          ],
+        ),
+        IconButton(
+            onPressed: () {
+              if (commentSectionAnchor.currentContext != null) {
+                Scrollable.ensureVisible(
+                  commentSectionAnchor.currentContext,
+                  alignment: 0.5,
+                  duration: const Duration(seconds: 1),
+                );
+              }
+            },
+            icon: Icon(Icons.comment_rounded)),
+        SizedBox(width: 20)
+      ],
+    );
+  }
+
+  Widget loadingView() {
+    return Column(
+      children: [
+        Expanded(
+          child: Center(
+            child: Text('Loading'),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _defaultView(Map experience, bool isLiked) {
     return Scaffold(
       drawer: NavBar(),
       appBar: AppBar(
@@ -54,17 +215,12 @@ class _ExperiencePageState extends State<ExperiencePage> {
             IconButton(
                 onPressed: () {
                   // TODO: Like experience | Test
-                  setState(() {
-                    Provider.of<ExperienceProvider>(context)
-                        .likeExperience(widget.experience['experienceID']);
-                  });
+                  BlocProvider.of<ExperienceBloc>(context).add(
+                      LikeExperienceEvent(experienceID: widget.experienceID));
                 },
                 icon: IconShadow(
                   Icon(Icons.favorite,
-                      color: Provider.of<ExperienceProvider>(context)
-                              .getLikedStatus(widget.experience['experienceID'])
-                          ? Theme.of(context).primaryColor
-                          : null),
+                      color: isLiked ? Theme.of(context).primaryColor : null),
                   shadowOffset: Offset.fromDirection(1, 2),
                   shadowColor: Color.fromARGB(114, 0, 0, 0),
                   shadowBlurSigma: 1,
@@ -74,136 +230,36 @@ class _ExperiencePageState extends State<ExperiencePage> {
         controller: scrollController,
         child: Column(
           children: [
-            SizedBox(height: 20),
-            ImageCarousel(galleryImages: widget.experience['images']),
-            SizedBox(height: 20),
+            (!experience['images'].isEmpty) ? SizedBox(height: 20) : Center(),
+            (!experience['images'].isEmpty)
+                ? ImageCarousel(galleryImages: experience['images'])
+                : Center(),
+            (!experience['images'].isEmpty) ? SizedBox(height: 20) : Center(),
             Container(
                 padding: EdgeInsets.fromLTRB(22, 22, 22, 0),
                 child: Column(
                   children: [
-                    _experienceTitle(context),
+                    _experienceTitle(context, experience),
                     SizedBox(height: 5),
                     Divider(thickness: 2),
-                    _postData(context),
+                    _postData(context, experience),
                     Divider(thickness: 2),
-                    _postHeader(context, commentSectionAnchor),
+                    _postHeader(context, commentSectionAnchor, experience),
                     Divider(thickness: 2),
                     SizedBox(height: 20),
                     Text(
-                      widget.experience['text'],
+                      experience['description'],
                       textAlign: TextAlign.justify,
                     ),
                   ],
                 )),
             CommentSection(
               anchor: commentSectionAnchor,
-              parentID: widget.experience['experienceID'],
+              parentID: widget.experienceID,
             )
           ],
         ),
       ),
-    );
-  }
-
-  Row _experienceTitle(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Flexible(
-            child: Text(widget.experience['title'] ?? "Experience Post Title",
-                style: Theme.of(context).textTheme.headline5)),
-        Row(
-          children: [
-            Icon(Icons.star, size: 25, color: Colors.amberAccent),
-            SizedBox(width: 3),
-            Text('${widget.experience['ratedStars']}',
-                style: Theme.of(context).textTheme.bodyLarge),
-          ],
-        ),
-      ],
-    );
-  }
-
-  Widget _postData(BuildContext context) {
-    return Row(children: [
-      Container(
-        padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            Icon(Icons.date_range, size: 25),
-            SizedBox(width: 3),
-            Text('${widget.experience['date']}'),
-          ],
-        ),
-      ),
-      Flexible(
-        child: ListTile(
-            title: Text("by ${widget.experience['author']}",
-                textAlign: TextAlign.end),
-            trailing: CircleAvatar(
-                radius: 18,
-                child: widget.experience['authorPicture'] ||
-                        !widget.experience['authorPicture'].isEmpty
-                    ? ClipOval(
-                        child: Image.network(widget.experience['author']))
-                    : Icon(Icons.person),
-                backgroundColor: Theme.of(context).listTileTheme.iconColor),
-            onTap: () {
-              // TODO: Send to ProfilePage
-              // Navigator.pop(context);
-            }),
-      ),
-    ]);
-  }
-
-  Row _postHeader(BuildContext context, commentSectionAnchor) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-      children: [
-        Flexible(
-          child: ListTile(
-            leading: IconButton(
-                onPressed: () {
-                  //TODO: Send to location page
-                },
-                icon: FaIcon(FontAwesomeIcons.locationDot, size: 25)),
-            title: Transform.translate(
-              offset: Offset(-16, 0),
-              child: Text(
-                  widget.experience['placeInfo']['placeName'] ?? "Place Name",
-                  style: Theme.of(context).textTheme.labelLarge),
-            ),
-            subtitle: Transform.translate(
-              offset: Offset(-16, 0),
-              child: Text(
-                "${widget.experience['placeInfo']['placeCity']}, ${widget.experience['placeInfo']['placeCountry']}",
-                style: Theme.of(context).textTheme.bodyMedium,
-              ),
-            ),
-          ),
-        ),
-        Row(
-          children: [
-            Icon(Icons.monetization_on, size: 25),
-            SizedBox(width: 3),
-            Text('${widget.experience['registeredCost']}',
-                style: Theme.of(context).textTheme.bodyLarge),
-          ],
-        ),
-        IconButton(
-            onPressed: () {
-              if (commentSectionAnchor.currentContext != null) {
-                Scrollable.ensureVisible(
-                  commentSectionAnchor.currentContext,
-                  alignment: 0.5,
-                  duration: const Duration(seconds: 1),
-                );
-              }
-            },
-            icon: Icon(Icons.comment_rounded)),
-        SizedBox(width: 20)
-      ],
     );
   }
 }

@@ -59,8 +59,10 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
 
   FutureOr<void> _getPlaces(
       GetPlacesEvent event, Emitter<HomeState> emit) async {
+    emit(LoadingState());
     try {
       _homePlaces = await _getPlacesQuery('');
+      emit(LoadedPlacesState(places: _homePlaces));
       // List of places
       //emit(LoadedPlacesState(places: places));
     } catch (e) {
@@ -86,7 +88,7 @@ FutureOr<void> _search(SearchEvent event, Emitter<HomeState> emit) {
 
 _getPlacesQuery(String filter) async {
   // Documents of Places
-  var queryPlaces = await FirebaseFirestore.instance.collection("user");
+  var queryPlaces = await FirebaseFirestore.instance.collection("place");
   // Get places
   var docsRef;
   if (filter != '') {
@@ -97,8 +99,16 @@ _getPlacesQuery(String filter) async {
   } else {
     docsRef = await queryPlaces.get();
   }
-  final places =
-      docsRef.docs.map((doc) => doc.data().cast<String, dynamic>()).toList();
+
+  for (var snapshot in docsRef.docs) {
+    var documentID = snapshot.id; // <-- Document ID
+  }
+
+  final places = docsRef.docs.map((doc) {
+    var parsedDoc = doc.data().cast<String, dynamic>();
+    parsedDoc['id'] = doc.id;
+    return parsedDoc;
+  }).toList();
   return places;
 }
 

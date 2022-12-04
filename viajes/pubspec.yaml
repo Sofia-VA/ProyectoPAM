@@ -73,12 +73,13 @@ dependencies:
   flutter_config: ^2.0.0
   flutter_dotenv: ^5.0.2
 
-  # Firebase
-  firebase_storage:
-  cloud_firestore:
+   # Firebase
+  firebase_core:
   firebase_auth:
-  google_sign_in: ^5.4.2
-  firebase_core: ^2.3.0
+  firebase_storage:
+  flutterfire_ui:
+  cloud_firestore:
+  google_sign_in:
 
 dev_dependencies:
   flutter_test:

@@ -25,8 +25,10 @@ class LocationCard extends StatelessWidget {
                   child: Column(mainAxisSize: MainAxisSize.max, children: [
                     Stack(children: <Widget>[
                       Ink.image(
-                          image: place['image'] ??
-                              AssetImage("assets/images/mountain_sunset.jpg"),
+                          image: place['picture'] == null ||
+                                  place['picture'] == ''
+                              ? AssetImage("assets/images/mountain_sunset.jpg")
+                              : NetworkImage(place['picture']) as ImageProvider,
                           height: 90,
                           width: MediaQuery.of(context).size.width * width,
                           fit: BoxFit.cover),
