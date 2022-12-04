@@ -13,6 +13,7 @@ import 'custom_widgets/comments/bloc/comment_bloc.dart';
 import 'home/bloc/home_bloc.dart';
 import 'location/bloc/location_bloc.dart';
 import 'location/experiences/bloc/experience_bloc.dart';
+import 'location/experiences/bloc/experiences_bloc.dart';
 import 'login_page.dart';
 
 void main() async {
@@ -27,9 +28,9 @@ void main() async {
     BlocProvider(create: (context) => LocationBloc()),
     BlocProvider(create: (context) => HomeBloc()),
     BlocProvider(create: (context) => ExperienceBloc()),
-    // BlocProvider(
-    //   create: (context) => CalendarBloc(),
-    // ),
+    BlocProvider(
+      create: (context) => ExperiencesBloc(),
+    ),
   ], child: MyApp()));
 }
 

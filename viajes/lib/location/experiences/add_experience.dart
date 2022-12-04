@@ -2,7 +2,7 @@
 
 import 'package:colours/colours.dart';
 import 'package:flutter/material.dart';
-import 'package:viajes/experience/pictures.dart';
+import 'package:viajes/location/experiences/pictures.dart';
 
 class AddExperience extends StatefulWidget {
   const AddExperience({super.key});

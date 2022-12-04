@@ -2,7 +2,7 @@
 
 import 'package:flutter/material.dart';
 
-import 'experience/add_experience.dart';
+import 'location/experiences/add_experience.dart';
 
 class Test extends StatefulWidget {
   const Test({super.key});

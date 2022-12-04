@@ -5,6 +5,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../custom_widgets/nav_bar.dart';
 import 'bloc/location_bloc.dart';
 import 'details_tab.dart';
+import 'experiences/add_experience.dart';
 import 'experiences/experiences_tab.dart';
 
 class LocationPage extends StatefulWidget {
@@ -135,6 +136,12 @@ class _LocationPageState extends State<LocationPage>
                         IconButton(
                             onPressed: () {
                               // TODO: Navigate Write Experience Page
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        const AddExperience()),
+                              );
                             },
                             icon: FaIcon(FontAwesomeIcons.featherPointed)),
                       ],
