@@ -18,7 +18,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 version: 1.0.0+1
 
 environment:
-  sdk: ">=2.17.6 <3.0.0"
+  sdk: ">=2.18.0 <3.0.0"
 
 # Dependencies specify other packages that your package needs in order to work.
 # To automatically upgrade your package dependencies to the latest versions
@@ -63,23 +63,23 @@ dependencies:
   intl:
   
   # Google Maps
-  # google_maps_flutter: ^2.2.1
-  # dio: ^4.0.6
-  # geolocator: ^9.0.2
-  # geocoding: ^2.0.5
-  # google_maps_webservice: ^0.0.19
+  google_maps_flutter: ^2.2.1
+  dio: ^4.0.6
+  geolocator: ^9.0.2
+  geocoding: ^2.0.5
+  google_maps_webservice: ^0.0.19
 
   # API_KEY
   flutter_config: ^2.0.0
   flutter_dotenv: ^5.0.2
 
    # Firebase
-  firebase_core:
+  firebase_core: ^2.3.0
   firebase_auth:
   firebase_storage:
   flutterfire_ui:
   cloud_firestore:
-  google_sign_in:
+  google_sign_in: ^5.4.2
 
 dev_dependencies:
   flutter_test:
