@@ -3,8 +3,8 @@
 import 'package:colours/colours.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:proyecto/calendar/add_to_calendar.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
+import 'package:viajes/calendar/add_to_calendar.dart';
 
 class Calendar extends StatefulWidget {
   const Calendar({super.key});
@@ -28,7 +28,8 @@ class _Calendar extends State<Calendar> {
               color: Colors.white,
             ),
             onPressed: () {
-              Navigator.push(context, MaterialPageRoute(builder: (context) => AddToCalendar()));
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => AddToCalendar()));
             },
           )
         ],
@@ -36,14 +37,14 @@ class _Calendar extends State<Calendar> {
       body: SfCalendar(
         backgroundColor: Colours.ghostWhite,
         dataSource: EventDataSource(events),
-        view: CalendarView.month,  
-        initialSelectedDate:  DateTime.now(),
+        view: CalendarView.month,
+        initialSelectedDate: DateTime.now(),
         cellBorderColor: Colors.transparent,
-        onLongPress: (details){
+        onLongPress: (details) {
           final provider = Provider.of<EventProvider>(context, listen: false);
           provider.setDate(details.date!);
           showModalBottomSheet(
-            context: context, 
+            context: context,
             builder: (context) => TripsCalendar(),
           );
         },

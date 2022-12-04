@@ -39,48 +39,49 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Travel App',
-      theme: ThemeData(
-          // General colors
-          colorScheme: ColorScheme.fromSeed(
-              seedColor: Colors.teal,
-              secondary: Color.fromARGB(255, 2, 114, 60)),
-          primaryColor: Colors.teal[300],
+        title: 'Travel App',
+        theme: ThemeData(
+            // General colors
+            colorScheme: ColorScheme.fromSeed(
+                seedColor: Colors.teal,
+                secondary: Color.fromARGB(255, 2, 114, 60)),
+            primaryColor: Colors.teal[300],
 
-          // Specific colors
-          iconTheme: IconThemeData(color: Colors.teal[700]),
-          listTileTheme: ListTileThemeData(iconColor: Colors.deepPurple[700]),
-          scrollbarTheme: ScrollbarThemeData(
-              thumbColor: MaterialStateProperty.all(Colors.teal[700])),
-          // Text Themes
-          fontFamily: 'Lato',
-          textTheme: TextTheme(bodyText2: TextStyle(height: 1.4))),
-      home: BlocConsumer<GoogleAuthBloc, GoogleAuthState>(
-        listener: (context, state) {},
-        builder: (context, state) {
-          if (state is GoogleAuthSuccessState) {
-            print("Success Auth");
-            return HomePage();
-          } else if (state is GoogleAuthErrorState ||
-              state is GoogleAuthSignOutSuccessState) {
-            print("Google auth sign out success");
-            return LoginPage();
-          } else if (state is GoogleAuthLoadingState) {
-            return Scaffold(
-              body: Center(
-                child: CircularProgressIndicator(),
-              ),
-            );
-          } else {
-            print(state);
-            return Scaffold(
-              body: Center(
-                child: Text("Error al iniciar :("),
-              ),
-            );
-          }
-        },
-      ),
-    );
+            // Specific colors
+            iconTheme: IconThemeData(color: Colors.teal[700]),
+            listTileTheme: ListTileThemeData(iconColor: Colors.deepPurple[700]),
+            scrollbarTheme: ScrollbarThemeData(
+                thumbColor: MaterialStateProperty.all(Colors.teal[700])),
+            // Text Themes
+            fontFamily: 'Lato',
+            textTheme: TextTheme(bodyText2: TextStyle(height: 1.4))),
+        home: HomePage()
+        // BlocConsumer<GoogleAuthBloc, GoogleAuthState>(
+        //   listener: (context, state) {},
+        //   builder: (context, state) {
+        //     if (state is GoogleAuthSuccessState) {
+        //       print("Success Auth");
+        //       return HomePage();
+        //     } else if (state is GoogleAuthErrorState ||
+        //         state is GoogleAuthSignOutSuccessState) {
+        //       print("Google auth sign out success");
+        //       return LoginPage();
+        //     } else if (state is GoogleAuthLoadingState) {
+        //       return Scaffold(
+        //         body: Center(
+        //           child: CircularProgressIndicator(),
+        //         ),
+        //       );
+        //     } else {
+        //       print(state);
+        //       return Scaffold(
+        //         body: Center(
+        //           child: Text("Error al iniciar :("),
+        //         ),
+        //       );
+        //     }
+        //   },
+        // ),
+        );
   }
 }
